@@ -49,6 +49,11 @@ class UIManager {
     
     // Stats
     this.dailyStatsEl = document.getElementById('daily-stats');
+    
+    // Navigation (in header now)
+    this.prevWeekBtn = document.getElementById('prev-week');
+    this.nextWeekBtn = document.getElementById('next-week');
+    this.weekRangeEl = document.getElementById('week-range');
   }
 
   /**
@@ -1072,7 +1077,7 @@ class UIManager {
           value="${entry ? entry.textValue : ''}" 
           data-habit-id="${habit.id}" 
           data-date="${date}"
-          placeholder="Введите значение">`;
+          placeholder="Значение">`;
         break;
         
       case 'emoji':
@@ -1101,7 +1106,7 @@ class UIManager {
     
     // Add comment icon if there's a comment
     if (entry && entry.comment && entry.comment.trim() !== '') {
-      cellContent += `<span class="comment-icon" title="${entry.comment}">ℹ️</span>`;
+      cellContent += `<span class="comment-icon has-comment" title="${entry.comment}">ℹ️</span>`;
     } else {
       cellContent += '<span class="comment-icon">ℹ️</span>';
     }

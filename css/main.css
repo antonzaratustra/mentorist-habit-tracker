@@ -35,6 +35,47 @@
   --inactive-button-color: #E0E0E0; /* Белый цвет для неактивных кнопок в темной теме */
 }
 
+/* Header Stats */
+.header-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--border-color);
+}
+
+.theme-dark .header-stats {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.header-stats .stats-summary span {
+  font-weight: bold;
+  color: white;
+}
+
+.header-stats .navigation-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+}
+
+.header-stats .nav-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+}
+
+.header-stats .nav-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.header-stats #week-range {
+  color: white;
+  font-weight: bold;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -542,6 +583,12 @@ body {
 
 .comment-icon:hover {
   opacity: 1;
+}
+
+.comment-icon.has-comment {
+  opacity: 1;
+  color: var(--accent-color);
+  font-weight: bold;
 }
 
 .completed-day {
