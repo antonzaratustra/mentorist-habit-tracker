@@ -842,7 +842,7 @@ class UIManager {
           }
           
           // If all parts were checked, uncheck all (reset to 0/X)
-          if (!partChecked) {
+          if (!partChecked && parts.every(p => p)) {
             parts = Array(partsCount).fill(false);
           }
           

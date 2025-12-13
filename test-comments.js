@@ -75,7 +75,11 @@ function testHabitCreation() {
   }
 }
 
-// Run tests
-console.log('Starting tests...');
-testHabitCreation();
-setTimeout(testCommentSaving, 1000); // Wait a bit for the habit to be fully created
+// Export functions for manual testing
+window.testHabitCreation = testHabitCreation;
+window.testCommentSaving = testCommentSaving;
+
+// Comment out automatic execution to prevent test habits from being created on page load
+// console.log('Starting tests...');
+// testHabitCreation();
+// setTimeout(testCommentSaving, 1000); // Wait a bit for the habit to be fully created
