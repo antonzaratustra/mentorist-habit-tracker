@@ -176,6 +176,9 @@ class UIManager {
     
     // Initialize add button state
     this.updateAddButton();
+    
+    // Bind confirm modal close buttons
+    this.bindConfirmModalEvents();
   }
 
   /**
@@ -188,6 +191,24 @@ class UIManager {
       } else {
         this.addViewBtn.textContent = '➕ Добавить привычку';
       }
+    }
+  }
+
+  /**
+   * Bind confirm modal events
+   */
+  bindConfirmModalEvents() {
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmClose = document.getElementById('confirm-close');
+    const confirmCancel = document.getElementById('confirm-cancel');
+    
+    if (confirmModal && confirmClose && confirmCancel) {
+      const closeModal = () => {
+        confirmModal.classList.add('hidden');
+      };
+      
+      confirmClose.addEventListener('click', closeModal);
+      confirmCancel.addEventListener('click', closeModal);
     }
   }
 
@@ -436,8 +457,9 @@ class UIManager {
       
       // Bind events for archive and move to ideas buttons
       if (archiveBtn) {
-        archiveBtn.onclick = () => {
-          if (confirm('Вы уверены, что хотите отправить эту привычку в архив?')) {
+        archiveBtn.onclick = async () => {
+          const confirmed = await this.showConfirm('Вы уверены, что хотите отправить эту привычку в архив?');
+          if (confirmed) {
             habitManager.archiveHabit(habit.id);
             this.closeHabitModal();
             this.render();
@@ -446,8 +468,9 @@ class UIManager {
       }
       
       if (moveToIdeasBtn) {
-        moveToIdeasBtn.onclick = () => {
-          if (confirm('Вы уверены, что хотите отправить эту привычку в идеи?')) {
+        moveToIdeasBtn.onclick = async () => {
+          const confirmed = await this.showConfirm('Вы уверены, что хотите отправить эту привычку в идеи?');
+          if (confirmed) {
             habitManager.moveToIdeas(habit.id);
             this.closeHabitModal();
             this.render();
@@ -482,6 +505,14 @@ class UIManager {
     }
     
     this.habitModal.classList.remove('hidden');
+    
+    // Focus on the habit name input field
+    setTimeout(() => {
+      const habitNameInput = document.getElementById('habit-name');
+      if (habitNameInput) {
+        habitNameInput.focus();
+      }
+    }, 100);
   }
 
   /**
@@ -732,6 +763,59 @@ class UIManager {
     if (commentText) {
       commentText.value = '';
     }
+  }
+
+  /**
+   * Show custom confirm dialog
+   * @param {string} message - Confirmation message
+   * @returns {Promise<boolean>} - Promise that resolves to true if confirmed, false otherwise
+   */
+  showConfirm(message) {
+    return new Promise((resolve) => {
+      const confirmModal = document.getElementById('confirm-modal');
+      const confirmMessage = document.getElementById('confirm-message');
+      const confirmOk = document.getElementById('confirm-ok');
+      const confirmCancel = document.getElementById('confirm-cancel');
+      const confirmClose = document.getElementById('confirm-close');
+      
+      if (!confirmModal || !confirmMessage || !confirmOk || !confirmCancel || !confirmClose) {
+        // Fallback to native confirm if modal elements are not found
+        resolve(confirm(message));
+        return;
+      }
+      
+      // Set message
+      confirmMessage.textContent = message;
+      
+      // Show modal
+      confirmModal.classList.remove('hidden');
+      
+      // Handle OK button
+      const handleOk = () => {
+        confirmModal.classList.add('hidden');
+        resolve(true);
+        cleanup();
+      };
+      
+      // Handle Cancel button and close button
+      const handleCancel = () => {
+        confirmModal.classList.add('hidden');
+        resolve(false);
+        cleanup();
+      };
+      
+      // Cleanup event listeners
+      const cleanup = () => {
+        confirmOk.removeEventListener('click', handleOk);
+        confirmCancel.removeEventListener('click', handleCancel);
+        confirmClose.removeEventListener('click', handleCancel);
+      };
+      
+      // Add event listeners
+      confirmOk.addEventListener('click', handleOk);
+      confirmCancel.addEventListener('click', handleCancel);
+      confirmClose.addEventListener('click', handleCancel);
+    });
   }
 
   /**
@@ -1193,10 +1277,11 @@ class UIManager {
     
     // Bind delete buttons
     document.querySelectorAll('.delete-habit-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const habitId = btn.dataset.habitId;
-        if (confirm('Вы уверены, что хотите удалить эту привычку?')) {
+        const confirmed = await this.showConfirm('Вы уверены, что хотите удалить эту привычку?');
+        if (confirmed) {
           habitManager.deleteHabit(habitId);
           this.render();
         }
@@ -1205,20 +1290,24 @@ class UIManager {
     
     // Bind restore buttons (for trashed habits)
     document.querySelectorAll('.restore-habit-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const habitId = btn.dataset.habitId;
-        habitManager.restoreHabit(habitId, 'active');
-        this.render();
+        const confirmed = await this.showConfirm('Вы уверены, что хотите восстановить эту привычку?');
+        if (confirmed) {
+          habitManager.restoreHabit(habitId, 'active');
+          this.render();
+        }
       });
     });
     
     // Bind permanent delete buttons (for trashed habits)
     document.querySelectorAll('.permanently-delete-habit-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const habitId = btn.dataset.habitId;
-        if (confirm('Вы уверены, что хотите окончательно удалить эту привычку?')) {
+        const confirmed = await this.showConfirm('Вы уверены, что хотите окончательно удалить эту привычку?');
+        if (confirmed) {
           habitManager.permanentlyDeleteHabit(habitId);
           this.render();
         }
