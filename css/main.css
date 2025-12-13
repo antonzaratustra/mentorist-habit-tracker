@@ -12,7 +12,7 @@
   --fail-color: #D64545;
   --partial-color: linear-gradient(45deg, #FF8C42, #FFB178);
   --highlight-color: rgba(255, 140, 66, 0.3);
-  --completed-week-color: rgba(255, 140, 66, 0.1);
+  --completed-week-color: rgba(255, 140, 66, 0.4);
   --shadow-color: rgba(0, 0, 0, 0.1);
   --modal-bg: rgba(255, 245, 230, 0.95);
 }
@@ -29,7 +29,7 @@
   --fail-color: #D64545;
   --partial-color: linear-gradient(45deg, #FF8C42, #FFB178);
   --highlight-color: rgba(255, 140, 66, 0.3);
-  --completed-week-color: rgba(255, 140, 66, 0.1);
+  --completed-week-color: rgba(255, 140, 66, 0.4);
   --shadow-color: rgba(0, 0, 0, 0.3);
   --modal-bg: rgba(26, 26, 26, 0.95);
   --inactive-button-color: #E0E0E0; /* Белый цвет для неактивных кнопок в темной теме */
@@ -102,11 +102,54 @@ body {
 
 .header-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
+  position: relative;
+  gap: 1rem;
+}
+
+.header-content h1 {
+  margin: 0;
+  text-align: center;
+}
+
+.header-controls {
+  position: relative;
+  right: auto;
+}
+
+/* Center the header stats */
+.header-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--border-color);
+}
+
+.header-stats .current-date {
+  flex: 1;
+  text-align: center;
+}
+
+.header-stats .stats-summary {
+  flex: 1;
+  text-align: center;
+}
+
+.header-stats .navigation-controls {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
 }
 
 .header-content h1 {
@@ -120,18 +163,77 @@ body {
 }
 
 .icon-button {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
   font-size: 1.2rem;
   cursor: pointer;
   color: white;
   padding: 0.5rem;
   border-radius: 50%;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .icon-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Theme toggle specific styles */
+#theme-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  border-radius: 30px;
+  width: 80px;
+  height: 30px;
+  padding: 0;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+#theme-toggle::before {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  left: 3px;
+  transition: all 0.3s ease;
+}
+
+#theme-toggle::after {
+  content: '🌙';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+}
+
+.theme-dark #theme-toggle::before {
+  left: 51px;
+}
+
+.theme-dark #theme-toggle::after {
+  content: '☀️';
+  left: 8px;
+  right: auto;
+}
+
+#theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+#theme-toggle span {
+  display: none;
 }
 
 .app-nav {
