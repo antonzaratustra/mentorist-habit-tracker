@@ -60,6 +60,12 @@ class HabitTrackerApp {
     
     document.body.className = `theme-${newTheme}`;
     
+    // Update theme toggle button emoji
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+      themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+    }
+    
     // Save setting
     const settings = storage.getSettings();
     settings.theme = newTheme;

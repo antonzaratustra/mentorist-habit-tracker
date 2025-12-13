@@ -948,9 +948,9 @@ class UIManager {
     const completedDays = {};
     weekDates.forEach(date => {
       const dailyStats = statsManager.getDailyStats(date);
-      // When all habits are completed -> apply completed-day-header class (darker color)
-      // When not all habits are completed -> no special class (lighter color)
-      completedDays[date] = dailyStats.percentage === 100;
+      // When all habits are completed -> no special class (lighter color)
+      // When not all habits are completed -> apply completed-day-header class (darker color)
+      completedDays[date] = dailyStats.percentage !== 100;
     });
     
     let html = `
