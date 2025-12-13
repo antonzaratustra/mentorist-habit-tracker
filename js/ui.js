@@ -1408,6 +1408,26 @@ class UIManager {
       }
     });
     
+    // Add comments report at the bottom
+    const todayEntries = entryManager.getEntriesByDate(today);
+    const commentsReport = todayEntries.filter(entry => entry.comment && entry.comment.trim() !== '');
+    
+    if (commentsReport.length > 0) {
+      html += '<div class="comments-report">';
+      html += '<h3>Комментарии за день</h3>';
+      html += '<ul class="comments-list">';
+      
+      commentsReport.forEach(entry => {
+        const habit = habitManager.getHabitById(entry.habitId);
+        if (habit) {
+          html += `<li><strong>${habit.name}:</strong> ${entry.comment}</li>`;
+        }
+      });
+      
+      html += '</ul>';
+      html += '</div>';
+    }
+    
     html += '</div>';
     
     this.habitTableContainer.innerHTML = html;

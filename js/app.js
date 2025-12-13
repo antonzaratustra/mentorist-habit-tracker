@@ -33,14 +33,15 @@ class HabitTrackerApp {
   loadSettings() {
     const settings = storage.getSettings();
     
-    // Apply theme
-    if (settings.theme) {
-      document.body.className = `theme-${settings.theme}`;
-    }
+    // Apply theme - default to dark theme
+    const theme = settings.theme || 'dark';
+    document.body.className = `theme-${theme}`;
     
     // Set up theme toggle
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
+      // Set initial emoji based on theme
+      themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
       themeToggle.addEventListener('click', () => this.toggleTheme());
     }
   }
@@ -60,6 +61,12 @@ class HabitTrackerApp {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
     
     document.body.className = `theme-${newTheme}`;
+    
+    // Update theme toggle button emoji
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+      themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+    }
     
     // Save setting
     const settings = storage.getSettings();
