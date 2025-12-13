@@ -11,6 +11,7 @@ class UIManager {
       type: ''
     };
     this.sortBy = 'strength';
+    this.tagColors = {};
     
     this.initializeElements();
     this.bindEvents();
@@ -170,6 +171,9 @@ class UIManager {
       });
     }
     
+    // Tag input handling
+    this.setupTagInput();
+    
     // Initialize add button state
     this.updateAddButton();
   }
@@ -185,6 +189,189 @@ class UIManager {
         this.addViewBtn.textContent = '➕ Добавить привычку';
       }
     }
+  }
+
+  /**
+   * Setup tag input functionality
+   */
+  setupTagInput() {
+    const tagInput = document.getElementById('habit-tags-input');
+    const tagsDisplay = document.getElementById('tags-display');
+    const hiddenTagsInput = document.getElementById('habit-tags');
+    
+    if (!tagInput || !tagsDisplay) return;
+    
+    // Handle key events for adding tags
+    tagInput.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ' || e.key === ',') && tagInput.value.trim()) {
+        e.preventDefault();
+        const tag = tagInput.value.trim().replace(/,/g, '');
+        if (tag) {
+          this.addTag(tag, tagsDisplay, hiddenTagsInput);
+          tagInput.value = '';
+        }
+      }
+      
+      // Handle backspace to remove last tag
+      if (e.key === 'Backspace' && !tagInput.value.trim() && tagsDisplay.children.length > 0) {
+        const lastTag = tagsDisplay.lastElementChild;
+        if (lastTag) {
+          const tagText = lastTag.querySelector('.tag-text').textContent;
+          tagsDisplay.removeChild(lastTag);
+          this.updateHiddenTagsInput(tagsDisplay, hiddenTagsInput);
+        }
+      }
+    });
+    
+    // Handle blur event
+    tagInput.addEventListener('blur', () => {
+      if (tagInput.value.trim()) {
+        const tag = tagInput.value.trim();
+        if (tag) {
+          this.addTag(tag, tagsDisplay, hiddenTagsInput);
+          tagInput.value = '';
+        }
+      }
+    });
+  }
+
+  /**
+   * Add a tag to the display
+   * @param {string} tag - Tag text
+   * @param {HTMLElement} tagsDisplay - Tags display container
+   * @param {HTMLInputElement} hiddenTagsInput - Hidden input for form submission
+   */
+  addTag(tag, tagsDisplay, hiddenTagsInput) {
+    // Check if tag already exists
+    const existingTags = Array.from(tagsDisplay.children).map(el => el.querySelector('.tag-text').textContent);
+    if (existingTags.includes(tag)) return;
+    
+    // Create tag element
+    const tagElement = document.createElement('div');
+    tagElement.className = 'tag';
+    
+    // Get or assign color for tag
+    const tagColor = this.getTagColor(tag);
+    
+    tagElement.innerHTML = `
+      <span class="tag-text">${tag}</span>
+      <span class="tag-color-picker" style="background-color: ${tagColor}" data-tag="${tag}"></span>
+    `;
+    
+    // Add click event to change color
+    const colorPicker = tagElement.querySelector('.tag-color-picker');
+    colorPicker.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.showColorPicker(e, tag, tagElement, hiddenTagsInput);
+    });
+    
+    // Add click event to remove tag
+    tagElement.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('tag-color-picker')) {
+        tagsDisplay.removeChild(tagElement);
+        this.updateHiddenTagsInput(tagsDisplay, hiddenTagsInput);
+      }
+    });
+    
+    tagsDisplay.appendChild(tagElement);
+    this.updateHiddenTagsInput(tagsDisplay, hiddenTagsInput);
+  }
+
+  /**
+   * Get color for a tag
+   * @param {string} tag - Tag text
+   * @returns {string} Color hex code
+   */
+  getTagColor(tag) {
+    // Predefined colors for tags
+    const colors = [
+      '#FF8C42', '#6A0572', '#AB83A1', '#5BC0EB', '#9BC53D',
+      '#E55934', '#FA7921', '#3CBBB1', '#FE4A49', '#4B3F72'
+    ];
+    
+    // If we already have a color for this tag, return it
+    if (this.tagColors[tag]) {
+      return this.tagColors[tag];
+    }
+    
+    // Assign a color based on tag index
+    const tagKeys = Object.keys(this.tagColors);
+    const index = tagKeys.length % colors.length;
+    this.tagColors[tag] = colors[index];
+    return this.tagColors[tag];
+  }
+
+  /**
+   * Show color picker popup
+   * @param {Event} e - Click event
+   * @param {string} tag - Tag text
+   * @param {HTMLElement} tagElement - Tag element
+   * @param {HTMLInputElement} hiddenTagsInput - Hidden input for form submission
+   */
+  showColorPicker(e, tag, tagElement, hiddenTagsInput) {
+    // Remove existing color picker if any
+    const existingPicker = document.querySelector('.color-picker-popup');
+    if (existingPicker) {
+      existingPicker.remove();
+    }
+    
+    // Create color picker
+    const colorPicker = document.createElement('div');
+    colorPicker.className = 'color-picker-popup';
+    
+    // Position near the color picker element
+    const rect = e.target.getBoundingClientRect();
+    colorPicker.style.position = 'absolute';
+    colorPicker.style.left = `${rect.left}px`;
+    colorPicker.style.top = `${rect.bottom + 5}px`;
+    
+    // Predefined colors
+    const colors = [
+      '#FF8C42', '#6A0572', '#AB83A1', '#5BC0EB', '#9BC53D',
+      '#E55934', '#FA7921', '#3CBBB1', '#FE4A49', '#4B3F72',
+      '#1F77B4', '#FF7F0E', '#2CA02C', '#D62728', '#9467BD'
+    ];
+    
+    // Add color options
+    colors.forEach(color => {
+      const colorOption = document.createElement('div');
+      colorOption.className = 'color-option';
+      colorOption.style.backgroundColor = color;
+      colorOption.addEventListener('click', () => {
+        this.tagColors[tag] = color;
+        const colorPickerElement = tagElement.querySelector('.tag-color-picker');
+        if (colorPickerElement) {
+          colorPickerElement.style.backgroundColor = color;
+        }
+        colorPicker.remove();
+      });
+      colorPicker.appendChild(colorOption);
+    });
+    
+    // Add to document
+    document.body.appendChild(colorPicker);
+    
+    // Remove when clicking elsewhere
+    const handleClickOutside = (event) => {
+      if (!colorPicker.contains(event.target) && event.target !== e.target) {
+        colorPicker.remove();
+        document.removeEventListener('click', handleClickOutside);
+      }
+    };
+    
+    setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 0);
+  }
+
+  /**
+   * Update hidden tags input value
+   * @param {HTMLElement} tagsDisplay - Tags display container
+   * @param {HTMLInputElement} hiddenTagsInput - Hidden input for form submission
+   */
+  updateHiddenTagsInput(tagsDisplay, hiddenTagsInput) {
+    const tags = Array.from(tagsDisplay.children).map(el => el.querySelector('.tag-text').textContent);
+    hiddenTagsInput.value = tags.join(', ');
   }
 
   /**
@@ -234,7 +421,8 @@ class UIManager {
         document.getElementById('emoji-options').value = habit.emojiOptions.join(', ');
       }
       
-      document.getElementById('habit-tags').value = habit.tags.join(', ');
+      // Populate tags display
+      this.populateTagsDisplay(habit.tags);
       
       // Populate time of day options
       this.populateTimeOfDayOptions(habit.type, habit.timeOfDay);
@@ -294,6 +482,25 @@ class UIManager {
     }
     
     this.habitModal.classList.remove('hidden');
+  }
+
+  /**
+   * Populate tags display
+   * @param {Array} tags - Array of tag strings
+   */
+  populateTagsDisplay(tags) {
+    const tagsDisplay = document.getElementById('tags-display');
+    const hiddenTagsInput = document.getElementById('habit-tags');
+    
+    if (!tagsDisplay) return;
+    
+    // Clear existing tags
+    tagsDisplay.innerHTML = '';
+    
+    // Add tags
+    tags.forEach(tag => {
+      this.addTag(tag, tagsDisplay, hiddenTagsInput);
+    });
   }
 
   /**
@@ -384,6 +591,18 @@ class UIManager {
     if (habitForm) {
       habitForm.reset();
       delete habitForm.dataset.habitId;
+    }
+    
+    // Reset tag display
+    const tagsDisplay = document.getElementById('tags-display');
+    if (tagsDisplay) {
+      tagsDisplay.innerHTML = '';
+    }
+    
+    // Reset hidden tags input
+    const hiddenTagsInput = document.getElementById('habit-tags');
+    if (hiddenTagsInput) {
+      hiddenTagsInput.value = '';
     }
   }
 

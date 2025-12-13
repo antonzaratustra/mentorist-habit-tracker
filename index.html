@@ -136,8 +136,12 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="habit-tags">Теги (через запятую):</label>
-                    <input type="text" id="habit-tags" placeholder="здоровье, работа, саморазвитие">
+                    <label for="habit-tags">Теги:</label>
+                    <div id="tag-input-container" class="tag-input-container">
+                        <div id="tags-display" class="tags-display"></div>
+                        <input type="text" id="habit-tags-input" placeholder="Введите тег и нажмите Enter или пробел">
+                    </div>
+                    <input type="hidden" id="habit-tags" name="habit-tags">
                 </div>
                 
                 <div class="form-actions">

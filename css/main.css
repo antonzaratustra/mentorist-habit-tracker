@@ -174,7 +174,7 @@ body {
 
 .habit-table-container {
   overflow-x: auto;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
   border-radius: 8px;
   box-shadow: 0 2px 10px var(--shadow-color);
   background-color: var(--row-even);
@@ -490,6 +490,8 @@ body {
   font-size: 0.8rem;
   transition: background-color 0.2s;
   color: var(--text-color); /* Ensure text is visible in dark theme */
+  margin-top: 0.5rem; /* Add spacing above buttons */
+  margin-right: 0.25rem; /* Add spacing between buttons */
 }
 
 .restore-habit-btn:hover {
@@ -606,6 +608,86 @@ body {
   border: 1px solid var(--border-color);
   background-color: var(--row-even);
   color: var(--text-color);
+}
+
+/* Tag input styles */
+.tag-input-container {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--row-even);
+  padding: 0.5rem;
+  min-height: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.tag {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tag:hover {
+  opacity: 0.8;
+}
+
+.tag-color-picker {
+  margin-left: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  display: inline-block;
+}
+
+#habit-tags-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  min-width: 150px;
+}
+
+#habit-tags-input:focus {
+  outline: none;
+}
+
+.color-picker-popup {
+  position: absolute;
+  background-color: var(--row-even);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.5rem;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  z-index: 1000;
+}
+
+.color-option {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0.1rem;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+}
+
+.color-option:hover {
+  transform: scale(1.1);
 }
 
 .form-actions {
