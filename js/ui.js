@@ -1079,8 +1079,10 @@ class UIManager {
         if (entry) {
           if (entry.checkboxState.completed) {
             cellContent = '☑';
+            cellClass += ' completed';
           } else if (entry.checkboxState.failed) {
             cellContent = '☒';
+            cellClass += ' failed';
           } else {
             cellContent = '☐';
           }
