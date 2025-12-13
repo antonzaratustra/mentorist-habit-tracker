@@ -93,18 +93,23 @@ class StatsManager {
   /**
    * Get daily statistics
    * @param {string} date - Date in YYYY-MM-DD format
+   * @param {Array} filteredHabits - Optional array of filtered habits
    * @returns {Object} Daily statistics
    */
-  getDailyStats(date) {
+  getDailyStats(date, filteredHabits = null) {
     const entries = storage.getEntriesByDate(date);
-    const totalHabits = storage.getHabits().filter(h => h.status === 'active').length;
+    
+    // Use filtered habits if provided, otherwise get all active habits
+    const allHabits = filteredHabits || storage.getHabits().filter(h => h.status === 'active');
+    const totalHabits = allHabits.length;
     
     let completed = 0;
     let failed = 0;
     
     entries.forEach(entry => {
-      const habit = storage.getHabitById(entry.habitId);
-      if (!habit || habit.status !== 'active') return;
+      // Find habit in our filtered list
+      const habit = allHabits.find(h => h.id === entry.habitId);
+      if (!habit) return; // Skip if habit is not in our filtered list
       
       if (habit.type.includes('checkbox')) {
         if (habit.type === 'checkbox') {

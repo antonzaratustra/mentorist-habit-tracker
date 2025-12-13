@@ -348,6 +348,12 @@ class UIManager {
    */
   closeHabitModal() {
     this.habitModal.classList.add('hidden');
+    // Reset form to clear any inputs
+    const habitForm = document.getElementById('habit-form');
+    if (habitForm) {
+      habitForm.reset();
+      delete habitForm.dataset.habitId;
+    }
   }
 
   /**
@@ -361,16 +367,22 @@ class UIManager {
     const formData = new FormData(e.target);
     console.log('Form data:', formData);
     
+    // Get values directly from form elements to avoid null issues
+    const nameInput = document.getElementById('habit-name');
+    const typeSelect = document.getElementById('habit-type');
+    const tagsInput = document.getElementById('habit-tags');
+    const emojiInput = document.getElementById('emoji-options');
+    
     const habitData = {
-      name: formData.get('habit-name'),
-      type: formData.get('habit-type'),
-      tags: formData.get('habit-tags').split(',').map(tag => tag.trim()).filter(tag => tag)
+      name: nameInput ? nameInput.value : '',
+      type: typeSelect ? typeSelect.value : 'checkbox',
+      tags: tagsInput && tagsInput.value ? tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag) : []
     };
     
     console.log('Habit data before processing:', habitData);
     
-    if (habitData.type === 'emoji') {
-      habitData.emojiOptions = formData.get('emoji-options')
+    if (habitData.type === 'emoji' && emojiInput && emojiInput.value) {
+      habitData.emojiOptions = emojiInput.value
         .split(',')
         .map(emoji => emoji.trim())
         .filter(emoji => emoji);
@@ -378,14 +390,16 @@ class UIManager {
     
     // Handle time of day settings
     if (habitData.type === 'checkbox' || habitData.type === 'text' || habitData.type === 'emoji') {
-      const timeOfDaySingle = formData.get('time-of-day-single') || 'day';
+      const timeOfDayRadios = document.querySelectorAll('input[name="time-of-day-single"]:checked');
+      const timeOfDaySingle = timeOfDayRadios.length > 0 ? timeOfDayRadios[0].value : 'day';
       habitData.timeOfDay = { single: timeOfDaySingle };
     } else if (habitData.type.startsWith('checkbox_')) {
       const partsCount = parseInt(habitData.type.split('_')[1]);
       const parts = [];
       
       for (let i = 0; i < partsCount; i++) {
-        const time = formData.get(`time-of-day-part-${i}`) || 'day';
+        const timeSelect = document.querySelector(`select[name="time-of-day-part-${i}"]`);
+        const time = timeSelect ? timeSelect.value : 'day';
         parts.push({ partIndex: i, time: time });
       }
       
@@ -409,7 +423,7 @@ class UIManager {
     }
     
     this.closeHabitModal();
-    this.render();
+    this.render(); // Ensure UI is refreshed
   }
 
   /**
@@ -454,6 +468,11 @@ class UIManager {
    */
   closeCommentModal() {
     this.commentModal.classList.add('hidden');
+    // Clear the comment text area
+    const commentText = document.getElementById('comment-text');
+    if (commentText) {
+      commentText.value = '';
+    }
   }
 
   /**
@@ -463,10 +482,13 @@ class UIManager {
   handleCommentFormSubmit(e) {
     e.preventDefault();
     
-    const formData = new FormData(e.target);
-    const habitId = e.target.dataset.habitId;
-    const date = e.target.dataset.date;
-    const comment = formData.get('comment-text');
+    const form = e.target;
+    const habitId = form.dataset.habitId;
+    const date = form.dataset.date;
+    
+    // Get comment value directly from the textarea element
+    const commentTextarea = document.getElementById('comment-text');
+    const comment = commentTextarea ? commentTextarea.value : '';
     
     console.log('Saving comment:', { habitId, date, comment });
     
@@ -474,7 +496,7 @@ class UIManager {
     entryManager.setComment(habitId, date, comment);
     
     this.closeCommentModal();
-    this.render();
+    this.render(); // Ensure UI is refreshed
   }
 
   /**
@@ -1048,7 +1070,9 @@ class UIManager {
           html += `<td class="empty-day"></td>`;
         } else {
           const dateStr = formatDate(date);
-          const dailyStats = statsManager.getDailyStats(dateStr);
+          // Apply filters to habits when calculating stats
+          const habits = this.getFilteredAndSortedHabits();
+          const dailyStats = statsManager.getDailyStats(dateStr, habits);
           const completionPercentage = dailyStats.percentage;
           
           // Determine cell class based on completion
@@ -1085,7 +1109,9 @@ class UIManager {
           html += `<td class="week-summary-cell empty"></td>`;
         } else {
           const dateStr = formatDate(date);
-          const dailyStats = statsManager.getDailyStats(dateStr);
+          // Apply filters to habits when calculating stats
+          const habits = this.getFilteredAndSortedHabits();
+          const dailyStats = statsManager.getDailyStats(dateStr, habits);
           
           html += `<td class="week-summary-cell">`;
           html += `<div class="habit-completion-count">${dailyStats.completed}/${dailyStats.totalHabits}</div>`;
