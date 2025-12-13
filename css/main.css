@@ -489,6 +489,7 @@ body {
   cursor: pointer;
   font-size: 0.8rem;
   transition: background-color 0.2s;
+  color: var(--text-color); /* Ensure text is visible in dark theme */
 }
 
 .restore-habit-btn:hover {

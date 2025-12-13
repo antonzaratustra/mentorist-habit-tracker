@@ -35,7 +35,7 @@ class HabitManager {
       emojiOptions: habitData.emojiOptions || [],
       tags: habitData.tags || [],
       timeOfDay: habitData.timeOfDay || { single: "day" },
-      status: habitData.status || "active",
+      status: habitData.status || "active", // Use provided status or default to active
       strength: 0,
       createdAt: now,
       updatedAt: now

@@ -99,6 +99,7 @@ class UIManager {
     if (this.filterStatus) {
       this.filterStatus.addEventListener('change', (e) => {
         this.filters.status = e.target.value;
+        this.updateAddButton();
         this.render();
       });
     }
@@ -167,6 +168,22 @@ class UIManager {
       habitTypeSelect.addEventListener('change', (e) => {
         this.toggleEmojiOptions(e.target.value);
       });
+    }
+    
+    // Initialize add button state
+    this.updateAddButton();
+  }
+
+  /**
+   * Update add button text based on filter status
+   */
+  updateAddButton() {
+    if (this.addViewBtn) {
+      if (this.filters.status === 'idea') {
+        this.addViewBtn.textContent = '➕ Добавить идею';
+      } else {
+        this.addViewBtn.textContent = '➕ Добавить привычку';
+      }
     }
   }
 
@@ -251,7 +268,10 @@ class UIManager {
       }
     } else {
       // Create new habit
-      modalTitle.textContent = 'Создать привычку';
+      // Check if we're in ideas view to set default status
+      const defaultStatus = this.filters.status === 'idea' ? 'idea' : 'active';
+      modalTitle.textContent = defaultStatus === 'idea' ? 'Создать идею' : 'Создать привычку';
+      
       habitForm.reset();
       delete habitForm.dataset.habitId;
       this.toggleEmojiOptions('checkbox');
@@ -260,6 +280,17 @@ class UIManager {
       // Hide archive and move to ideas buttons
       if (archiveBtn) archiveBtn.style.display = 'none';
       if (moveToIdeasBtn) moveToIdeasBtn.style.display = 'none';
+      
+      // Store the default status in a hidden field
+      let statusInput = document.getElementById('habit-status');
+      if (!statusInput) {
+        statusInput = document.createElement('input');
+        statusInput.type = 'hidden';
+        statusInput.id = 'habit-status';
+        statusInput.name = 'habit-status';
+        habitForm.appendChild(statusInput);
+      }
+      statusInput.value = defaultStatus;
     }
     
     this.habitModal.classList.remove('hidden');
@@ -372,12 +403,20 @@ class UIManager {
     const typeSelect = document.getElementById('habit-type');
     const tagsInput = document.getElementById('habit-tags');
     const emojiInput = document.getElementById('emoji-options');
+    const statusInput = document.getElementById('habit-status');
     
     const habitData = {
-      name: nameInput ? nameInput.value : '',
+      name: nameInput ? nameInput.value.trim() : '',
       type: typeSelect ? typeSelect.value : 'checkbox',
-      tags: tagsInput && tagsInput.value ? tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag) : []
+      tags: tagsInput && tagsInput.value ? tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+      status: statusInput ? statusInput.value : 'active' // Use default status
     };
+    
+    // Validate habit name
+    if (!habitData.name) {
+      alert('Пожалуйста, введите название привычки');
+      return;
+    }
     
     console.log('Habit data before processing:', habitData);
     
@@ -411,9 +450,10 @@ class UIManager {
     const habitId = e.target.dataset.habitId;
     
     if (habitId) {
-      // Update existing habit
-      console.log('Updating habit:', habitId, habitData);
-      const result = habitManager.updateHabit(habitId, habitData);
+      // Update existing habit (remove status from updates as it's managed separately)
+      const { status, ...updateData } = habitData;
+      console.log('Updating habit:', habitId, updateData);
+      const result = habitManager.updateHabit(habitId, updateData);
       console.log('Update result:', result);
     } else {
       // Create new habit
@@ -801,7 +841,7 @@ class UIManager {
             }
           }
           
-          // If all parts were checked, uncheck all
+          // If all parts were checked, uncheck all (reset to 0/X)
           if (!partChecked) {
             parts = Array(partsCount).fill(false);
           }
