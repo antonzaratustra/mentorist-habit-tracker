@@ -31,36 +31,48 @@
 
     <nav class="app-nav">
         <button id="add-habit-btn" class="primary-button">➕ Добавить привычку</button>
-        <div class="view-switcher">
-            <button class="view-btn active" data-view="week">Неделя</button>
-            <button class="view-btn" data-view="day">День</button>
-            <button class="view-btn" data-view="month">Месяц</button>
+        
+        <div class="nav-group">
+            <h3>Просмотр</h3>
+            <div class="view-switcher">
+                <button class="view-btn active" data-view="week">Неделя</button>
+                <button class="view-btn" data-view="day">День</button>
+                <button class="view-btn" data-view="month">Месяц</button>
+            </div>
         </div>
-        <div class="filters">
-            <select id="filter-tags">
-                <option value="">Все теги</option>
-            </select>
-            <select id="filter-time">
-                <option value="">Все времена</option>
-                <option value="morning">Утро</option>
-                <option value="day">День</option>
-                <option value="evening">Вечер</option>
-            </select>
-            <select id="filter-type">
-                <option value="">Все типы</option>
-                <option value="checkbox">Чекбокс</option>
-                <option value="text">Текст</option>
-                <option value="emoji">Эмодзи</option>
-                <option value="checkbox_2">Чекбокс 2 части</option>
-                <option value="checkbox_3">Чекбокс 3 части</option>
-                <option value="checkbox_4">Чекбокс 4 части</option>
-            </select>
-            <select id="filter-status">
-                <option value="active">Активные</option>
-                <option value="archived">Архив</option>
-                <option value="idea">Идеи</option>
-                <option value="trash">Корзина</option>
-            </select>
+        
+        <div class="nav-group">
+            <h3>Фильтры</h3>
+            <div class="filters">
+                <select id="filter-tags">
+                    <option value="">Все теги</option>
+                </select>
+                <select id="filter-time">
+                    <option value="">Все времена</option>
+                    <option value="morning">Утро</option>
+                    <option value="day">День</option>
+                    <option value="evening">Вечер</option>
+                </select>
+                <select id="filter-type">
+                    <option value="">Все типы</option>
+                    <option value="checkbox">Чекбокс</option>
+                    <option value="text">Текст</option>
+                    <option value="emoji">Эмодзи</option>
+                    <option value="checkbox_2">Чекбокс 2 части</option>
+                    <option value="checkbox_3">Чекбокс 3 части</option>
+                    <option value="checkbox_4">Чекбокс 4 части</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="nav-group">
+            <h3>Статус</h3>
+            <div class="status-filters">
+                <button class="status-filter active" data-status="active">Активные</button>
+                <button class="status-filter" data-status="archived">Архив</button>
+                <button class="status-filter" data-status="idea">Идеи</button>
+                <button class="status-filter" data-status="trash">Корзина</button>
+            </div>
         </div>
     </nav>
 

@@ -36,7 +36,7 @@ class UIManager {
     this.filterTags = document.getElementById('filter-tags');
     this.filterTime = document.getElementById('filter-time');
     this.filterType = document.getElementById('filter-type');
-    this.filterStatus = document.getElementById('filter-status');
+    this.statusFilters = document.querySelectorAll('.status-filter');
     
     // Main content
     this.habitTableContainer = document.getElementById('habit-table-container');
@@ -102,11 +102,19 @@ class UIManager {
       });
     }
     
-    if (this.filterStatus) {
-      this.filterStatus.addEventListener('change', (e) => {
-        this.filters.status = e.target.value;
-        this.updateAddButton();
-        this.render();
+    // Status filter buttons
+    if (this.statusFilters) {
+      this.statusFilters.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          // Remove active class from all buttons
+          this.statusFilters.forEach(b => b.classList.remove('active'));
+          // Add active class to clicked button
+          e.target.classList.add('active');
+          // Update filter
+          this.filters.status = e.target.dataset.status;
+          this.updateAddButton();
+          this.render();
+        });
       });
     }
     
@@ -911,7 +919,17 @@ class UIManager {
     this.filterTags.value = this.filters.tag;
     this.filterTime.value = this.filters.timeOfDay;
     this.filterType.value = this.filters.type;
-    this.filterStatus.value = this.filters.status;
+    
+    // Update status filter buttons
+    if (this.statusFilters) {
+      this.statusFilters.forEach(btn => {
+        if (btn.dataset.status === this.filters.status) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
   }
 
   /**
