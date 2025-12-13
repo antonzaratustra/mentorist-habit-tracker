@@ -12,7 +12,7 @@
   --fail-color: #D64545;
   --partial-color: linear-gradient(45deg, #FF8C42, #FFB178);
   --highlight-color: rgba(255, 140, 66, 0.3);
-  --completed-week-color: rgba(255, 140, 66, 0.4);
+  --completed-week-color: rgba(255, 140, 66, 0.1);
   --shadow-color: rgba(0, 0, 0, 0.1);
   --modal-bg: rgba(255, 245, 230, 0.95);
 }
@@ -29,7 +29,7 @@
   --fail-color: #D64545;
   --partial-color: linear-gradient(45deg, #FF8C42, #FFB178);
   --highlight-color: rgba(255, 140, 66, 0.3);
-  --completed-week-color: rgba(255, 140, 66, 0.4);
+  --completed-week-color: rgba(255, 140, 66, 0.1);
   --shadow-color: rgba(0, 0, 0, 0.3);
   --modal-bg: rgba(26, 26, 26, 0.95);
   --inactive-button-color: #E0E0E0; /* Белый цвет для неактивных кнопок в темной теме */
@@ -323,11 +323,15 @@ body {
   flex-wrap: wrap;
 }
 
+#time-of-day-options.multipart {
+  flex-direction: column;
+}
+
 .time-option {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0;
+  margin-bottom: 0.5rem;
 }
 
 .time-option label {
@@ -573,7 +577,7 @@ body {
 }
 
 .calendar-day.started {
-  background-color: rgba(255, 140, 66, 0.3);
+  background-color: rgba(255, 140, 66, 0.4);
 }
 
 .empty-day {
@@ -740,10 +744,13 @@ body {
   user-select: none;
   color: var(--accent-color);
   transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .checkbox-cell:hover {
-  transform: scale(1.1);
+  font-size: 2.2rem;
+  margin: -0.1rem;
 }
 
 .checkbox-cell.completed {
@@ -763,10 +770,28 @@ body {
   color: var(--text-color);
 }
 
+.text-cell {
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.text-cell:hover {
+  transform: scale(1.05);
+}
+
 .emoji-cell {
   text-align: center;
   cursor: pointer;
   font-size: 1.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.emoji-cell:hover {
+  font-size: 1.65rem;
+  margin: -0.075rem;
 }
 
 .comment-icon {

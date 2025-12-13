@@ -558,6 +558,9 @@ class UIManager {
     
     container.innerHTML = ''; // Clear existing options
     
+    // Remove any existing classes
+    container.classList.remove('multipart');
+    
     if (type === 'checkbox') {
       // Single time of day selection
       container.innerHTML = `
@@ -600,6 +603,8 @@ class UIManager {
       }
       
       container.innerHTML = html;
+      // Add multipart class for vertical layout
+      container.classList.add('multipart');
     } else {
       // For text and emoji types, single time selection
       container.innerHTML = `
@@ -943,6 +948,8 @@ class UIManager {
     const completedDays = {};
     weekDates.forEach(date => {
       const dailyStats = statsManager.getDailyStats(date);
+      // When all habits are completed -> apply completed-day-header class (lighter color now)
+      // When not all habits are completed -> no special class (darker color now)
       completedDays[date] = dailyStats.percentage === 100;
     });
     
