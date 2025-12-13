@@ -133,11 +133,30 @@ class EntryManager {
       }
       
       // Toggle the specific part
-      entry.checkboxState.parts[partIndex] = !entry.checkboxState.parts[partIndex];
+      const wasChecked = entry.checkboxState.parts[partIndex];
+      entry.checkboxState.parts[partIndex] = !wasChecked;
+      
+      // Increase habit strength when part is checked
+      if (!wasChecked) {
+        const habit = habitManager.getHabitById(habitId);
+        if (habit) {
+          habit.strength = (habit.strength || 0) + 1;
+          habitManager.saveHabits();
+        }
+      }
     } else {
       // Handle single checkbox: empty → completed → failed → empty
+      const wasCompleted = entry.checkboxState.completed;
       if (!entry.checkboxState.completed && !entry.checkboxState.failed) {
         entry.checkboxState.completed = true;
+        // Increase habit strength when marked as completed
+        if (!wasCompleted) {
+          const habit = habitManager.getHabitById(habitId);
+          if (habit) {
+            habit.strength = (habit.strength || 0) + 1;
+            habitManager.saveHabits();
+          }
+        }
       } else if (entry.checkboxState.completed && !entry.checkboxState.failed) {
         entry.checkboxState.completed = false;
         entry.checkboxState.failed = true;
@@ -167,6 +186,18 @@ class EntryManager {
       entry = this.createEntry(habitId, date);
     }
 
+    // Increase habit strength when text value is added (and wasn't empty before)
+    const hadValue = entry.textValue && entry.textValue.trim() !== '';
+    const hasValue = textValue && textValue.trim() !== '';
+    
+    if (!hadValue && hasValue) {
+      const habit = habitManager.getHabitById(habitId);
+      if (habit) {
+        habit.strength = (habit.strength || 0) + 1;
+        habitManager.saveHabits();
+      }
+    }
+
     entry.textValue = textValue;
     entry.updatedAt = getCurrentDate();
     this.saveEntries();
@@ -186,6 +217,18 @@ class EntryManager {
     // Create entry if it doesn't exist
     if (!entry) {
       entry = this.createEntry(habitId, date);
+    }
+
+    // Increase habit strength when emoji value is added (and wasn't set before)
+    const hadValue = entry.emojiValue && entry.emojiValue.trim() !== '';
+    const hasValue = emojiValue && emojiValue.trim() !== '';
+    
+    if (!hadValue && hasValue) {
+      const habit = habitManager.getHabitById(habitId);
+      if (habit) {
+        habit.strength = (habit.strength || 0) + 1;
+        habitManager.saveHabits();
+      }
     }
 
     entry.emojiValue = emojiValue;

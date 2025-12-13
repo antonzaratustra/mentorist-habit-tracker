@@ -8,7 +8,8 @@ class UIManager {
       status: 'active',
       tag: '',
       timeOfDay: '',
-      type: ''
+      type: '',
+      strength: ''
     };
     this.sortBy = 'strength';
     this.tagColors = {};
@@ -36,6 +37,7 @@ class UIManager {
     this.filterTags = document.getElementById('filter-tags');
     this.filterTime = document.getElementById('filter-time');
     this.filterType = document.getElementById('filter-type');
+    this.filterStrength = document.getElementById('filter-strength');
     this.statusFilters = document.querySelectorAll('.status-filter');
     
     // Main content
@@ -98,6 +100,13 @@ class UIManager {
     if (this.filterType) {
       this.filterType.addEventListener('change', (e) => {
         this.filters.type = e.target.value;
+        this.render();
+      });
+    }
+    
+    if (this.filterStrength) {
+      this.filterStrength.addEventListener('change', (e) => {
+        this.filters.strength = e.target.value;
         this.render();
       });
     }
@@ -924,6 +933,9 @@ class UIManager {
     this.filterTags.value = this.filters.tag;
     this.filterTime.value = this.filters.timeOfDay;
     this.filterType.value = this.filters.type;
+    if (this.filterStrength) {
+      this.filterStrength.value = this.filters.strength;
+    }
     
     // Update status filter buttons
     if (this.statusFilters) {
@@ -1005,6 +1017,7 @@ class UIManager {
       
       html += `<tr class="${rowClass} ${index % 2 === 0 ? 'even' : 'odd'}" data-habit-id="${habit.id}">`;
       html += `<td class="habit-name-cell">`;
+      html += `<span class="habit-strength" title="Сила привычки">${habit.strength || 0}</span>`;
       html += `<span class="habit-name">${habit.name}</span>`;
       html += `<span class="habit-time-info">${this.getHabitTimeInfo(habit)}</span>`;
       

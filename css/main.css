@@ -774,6 +774,17 @@ body {
   gap: 0.5rem; /* Add spacing between elements */
 }
 
+.habit-strength {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}
+
 .habit-name {
   flex-grow: 1;
   overflow: hidden;

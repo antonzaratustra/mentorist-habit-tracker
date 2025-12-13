@@ -58,6 +58,31 @@ class FilterManager {
   }
 
   /**
+   * Filter habits by strength
+   * @param {Array} habits - Array of habits
+   * @param {string} strength - Strength level to filter by
+   * @returns {Array} Filtered habits
+   */
+  filterByStrength(habits, strength) {
+    if (!strength) return habits;
+    
+    return habits.filter(habit => {
+      const habitStrength = habit.strength || 0;
+      
+      switch (strength) {
+        case 'weak':
+          return habitStrength <= 5;
+        case 'medium':
+          return habitStrength > 5 && habitStrength <= 15;
+        case 'strong':
+          return habitStrength > 15;
+        default:
+          return true;
+      }
+    });
+  }
+
+  /**
    * Apply multiple filters
    * @param {Array} habits - Array of habits
    * @param {Object} filters - Filter criteria
@@ -80,6 +105,10 @@ class FilterManager {
     
     if (filters.type) {
       filtered = this.filterByType(filtered, filters.type);
+    }
+    
+    if (filters.strength) {
+      filtered = this.filterByStrength(filtered, filters.strength);
     }
     
     return filtered;
