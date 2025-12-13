@@ -11,6 +11,9 @@
 <body>
     <header class="app-header">
         <div class="header-content">
+            <div class="header-controls">
+                <button id="help-button" class="icon-button help-button">&#63;</button>
+            </div>
             <h1>Mentorist Habit Tracker</h1>
             <div class="header-controls">
                 <button id="theme-toggle" class="icon-button"><span>🌙</span></button>
@@ -217,6 +220,172 @@
                 <div class="form-actions">
                     <button id="confirm-cancel" class="secondary-button">Отмена</button>
                     <button id="confirm-ok" class="primary-button">ОК</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-content help-modal-content">
+            <div class="modal-header">
+                <h2>📖 Руководство пользователя</h2>
+                <button class="close-button" id="help-close">&times;</button>
+            </div>
+            <div class="modal-body help-modal-body">
+                <div class="help-section">
+                    <h3>🎯 Начало работы</h3>
+                    <p>Добро пожаловать в <span class="highlight">Mentorist Habit Tracker</span> — ваш персональный инструмент для формирования полезных привычек!</p>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">✨</div>
+                        <div class="feature-content">
+                            <h4>Добавление привычек</h4>
+                            <p>Нажмите кнопку <button class="inline-button">➕ Добавить привычку</button> для создания новой привычки. Выберите тип, время суток и добавьте теги для удобной фильтрации.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <h3>📊 Типы привычек</h3>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">☑️</div>
+                        <div class="feature-content">
+                            <h4>Простой чекбокс</h4>
+                            <p>Классический способ отслеживания — выполнено или нет. Три состояния: <span class="state-empty">☐ Не начато</span>, <span class="state-completed">☑ Выполнено</span>, <span class="state-failed">☒ Пропущено</span>.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🔢</div>
+                        <div class="feature-content">
+                            <h4>Многочастевые чекбоксы (2/3/4 части)</h4>
+                            <p>Для сложных привычек, которые можно разделить на этапы. Например: <span class="example">📚 Чтение книги: 0/3</span> → <span class="example">📚 Чтение книги: 3/3</span>.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <div class="feature-content">
+                            <h4>Текстовое поле</h4>
+                            <p>Для привычек, требующих записей. Например: <span class="example">✍️ Дневник: "Сегодня я..."</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">😊</div>
+                        <div class="feature-content">
+                            <h4>Выбор эмодзи</h4>
+                            <p>Эмоциональное отслеживание настроения. Например: <span class="example">🧘 Медитация: 😊</span> → <span class="example">🧘 Медитация: 😐</span> → <span class="example">🧘 Медитация: 😢</span>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <h3>📅 Просмотр данных</h3>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📆</div>
+                        <div class="feature-content">
+                            <h4>Переключение режимов</h4>
+                            <p>Выберите нужный вид отображения:</p>
+                            <ul>
+                                <li><span class="mode-indicator week-mode"></span> <strong>Неделя</strong> — обзор недели с цветовой индикацией</li>
+                                <li><span class="mode-indicator day-mode"></span> <strong>День</strong> — детальный просмотр дня</li>
+                                <li><span class="mode-indicator month-mode"></span> <strong>Месяц</strong> — календарь с прогрессом</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <h3>🔍 Фильтрация и сортировка</h3>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🏷️</div>
+                        <div class="feature-content">
+                            <h4>Фильтры</h4>
+                            <p>Используйте фильтры для точной настройки отображения:</p>
+                            <ul>
+                                <li><strong>Теги</strong> — группировка по категориям</li>
+                                <li><strong>Время суток</strong> — утро/день/вечер</li>
+                                <li><strong>Типы</strong> — чекбоксы, текст, эмодзи и т.д.</li>
+                                <li><strong>Сила привычки</strong> — слабые/средние/сильные</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-content">
+                            <h4>Сортировка</h4>
+                            <p>Привычки автоматически сортируются по силе (слабые первыми) для лучшей мотивации.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <h3>💡 Полезные советы</h3>
+                    
+                    <div class="tip-card">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <h4>Цветовая индикация</h4>
+                            <p>Обратите внимание на цвета:</p>
+                            <ul>
+                                <li><span class="color-sample completed-color"></span> Завершенные дни/привычки</li>
+                                <li><span class="color-sample incompleted-color"></span> Незавершенные дни/привычки</li>
+                                <li><span class="color-sample strength-color"></span> Индикатор силы привычки</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <div class="tip-icon">💬</div>
+                        <div class="tip-content">
+                            <h4>Комментарии</h4>
+                            <p>Нажмите на значок <span class="inline-icon">ℹ️</span> в любой ячейке, чтобы добавить комментарий. Все комментарии отображаются в конце дневного отчета.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <div class="tip-icon">🔄</div>
+                        <div class="tip-content">
+                            <h4>Сила привычки</h4>
+                            <p>Сила увеличивается при каждом выполнении привычки и уменьшается при отмене. Используйте фильтр силы для фокусировки на нужных привычках.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-section">
+                    <h3>⚙️ Настройки</h3>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🌓</div>
+                        <div class="feature-content">
+                            <h4>Тема оформления</h4>
+                            <p>Переключайтесь между светлой и темной темой с помощью кнопки <button class="inline-button theme-toggle-demo">🌙</button> в шапке.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🗑️</div>
+                        <div class="feature-content">
+                            <h4>Управление привычками</h4>
+                            <p>Используйте статусы для организации:</p>
+                            <ul>
+                                <li><strong>Активные</strong> — текущие привычки</li>
+                                <li><strong>Архив</strong> — завершенные привычки</li>
+                                <li><strong>Идеи</strong> — потенциальные привычки</li>
+                                <li><strong>Корзина</strong> — удаленные привычки</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="help-footer">
+                    <p>🌟 <strong>Совет дня:</strong> Начните с 1-2 простых привычек и постепенно увеличивайте количество. Последовательность важнее интенсивности!</p>
                 </div>
             </div>
         </div>

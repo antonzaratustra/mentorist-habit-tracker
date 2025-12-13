@@ -25,6 +25,7 @@ class UIManager {
   initializeElements() {
     // Header elements
     this.currentDateEl = document.getElementById('current-date');
+    this.helpButton = document.getElementById('help-button');
     
     // Navigation elements
     this.addViewBtn = document.getElementById('add-habit-btn');
@@ -72,6 +73,11 @@ class UIManager {
     // Navigation
     if (this.addViewBtn) {
       this.addViewBtn.addEventListener('click', () => this.openHabitModal());
+    }
+    
+    // Help button
+    if (this.helpButton) {
+      this.helpButton.addEventListener('click', () => this.openHelpModal());
     }
     
     if (this.prevWeekBtn) {
@@ -213,6 +219,31 @@ class UIManager {
       } else {
         this.addViewBtn.textContent = '➕ Добавить привычку';
       }
+    }
+  }
+
+  /**
+   * Open help modal
+   */
+  openHelpModal() {
+    const helpModal = document.getElementById('help-modal');
+    if (helpModal) {
+      helpModal.classList.remove('hidden');
+      
+      // Add close event listener
+      const closeBtn = document.getElementById('help-close');
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          helpModal.classList.add('hidden');
+        };
+      }
+      
+      // Close when clicking outside
+      helpModal.onclick = (e) => {
+        if (e.target === helpModal) {
+          helpModal.classList.add('hidden');
+        }
+      };
     }
   }
 
