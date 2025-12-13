@@ -556,19 +556,19 @@ class UIManager {
         <div class="time-option">
           <label>
             <input type="radio" name="time-of-day-single" value="morning" ${(!timeOfDay || timeOfDay.single === 'morning') ? 'checked' : ''}>
-            Утро
+            🌅 Утро
           </label>
         </div>
         <div class="time-option">
           <label>
             <input type="radio" name="time-of-day-single" value="day" ${(timeOfDay && timeOfDay.single === 'day') ? 'checked' : ''}>
-            День
+            ☀️ День
           </label>
         </div>
         <div class="time-option">
           <label>
             <input type="radio" name="time-of-day-single" value="evening" ${(timeOfDay && timeOfDay.single === 'evening') ? 'checked' : ''}>
-            Вечер
+            🌙 Вечер
           </label>
         </div>
       `;
@@ -583,9 +583,9 @@ class UIManager {
           <div class="time-option">
             <label>Часть ${i + 1}:</label>
             <select name="time-of-day-part-${i}">
-              <option value="morning" ${partTime === 'morning' ? 'selected' : ''}>Утро</option>
-              <option value="day" ${partTime === 'day' ? 'selected' : ''}>День</option>
-              <option value="evening" ${partTime === 'evening' ? 'selected' : ''}>Вечер</option>
+              <option value="morning" ${partTime === 'morning' ? 'selected' : ''}>🌅 Утро</option>
+              <option value="day" ${partTime === 'day' ? 'selected' : ''}>☀️ День</option>
+              <option value="evening" ${partTime === 'evening' ? 'selected' : ''}>🌙 Вечер</option>
             </select>
           </div>
         `;
@@ -598,19 +598,19 @@ class UIManager {
         <div class="time-option">
           <label>
             <input type="radio" name="time-of-day-single" value="morning" ${(!timeOfDay || timeOfDay.single === 'morning') ? 'checked' : ''}>
-            Утро
+            🌅 Утро
           </label>
         </div>
         <div class="time-option">
           <label>
             <input type="radio" name="time-of-day-single" value="day" ${(timeOfDay && timeOfDay.single === 'day') ? 'checked' : ''}>
-            День
+            ☀️ День
           </label>
         </div>
         <div class="time-option">
           <label>
             <input type="radio" name="time-of-day-single" value="evening" ${(timeOfDay && timeOfDay.single === 'evening') ? 'checked' : ''}>
-            Вечер
+            🌙 Вечер
           </label>
         </div>
       `;
@@ -1031,9 +1031,9 @@ class UIManager {
       return `<span class="time-tag">${timeLabels[habit.timeOfDay.single] || habit.timeOfDay.single}</span>`;
     } else if (habit.timeOfDay.parts) {
       const timeLabels = {
-        'morning': '🌅',
-        'day': '☀️',
-        'evening': '🌙'
+        'morning': '🌅 Утро',
+        'day': '☀️ День',
+        'evening': '🌙 Вечер'
       };
       
       const times = habit.timeOfDay.parts.map(part => timeLabels[part.time] || part.time);
@@ -1340,9 +1340,9 @@ class UIManager {
     
     // Group habits by time of day
     const timeGroups = {
-      morning: { habits: [], label: 'УТРО ☀️' },
-      day: { habits: [], label: 'ДЕНЬ ☼' },
-      evening: { habits: [], label: 'ВЕЧЕР 🌙' }
+      morning: { habits: [], label: '🌅 УТРО' },
+      day: { habits: [], label: '☀️ ДЕНЬ' },
+      evening: { habits: [], label: '🌙 ВЕЧЕР' }
     };
     
     habits.forEach(habit => {
@@ -1394,9 +1394,9 @@ class UIManager {
    */
   getTimeLabel(time) {
     switch (time) {
-      case 'morning': return 'УТРО';
-      case 'day': return 'ДЕНЬ';
-      case 'evening': return 'ВЕЧЕР';
+      case 'morning': return '🌅 УТРО';
+      case 'day': return '☀️ ДЕНЬ';
+      case 'evening': return '🌙 ВЕЧЕР';
       default: return time;
     }
   }
@@ -1625,13 +1625,18 @@ class UIManager {
     
     this.ideasPanel.style.display = 'block';
     
+    // Check if panel should be collapsed
+    const isCollapsed = this.ideasPanel.classList.contains('collapsed');
+    
     let html = '<ul class="ideas-list">';
-    habits.forEach(idea => {
-      html += `<li>
-        ${idea.name} 
-        <button class="activate-idea" data-habit-id="${idea.id}">Активировать</button>
-      </li>`;
-    });
+    if (!isCollapsed) {
+      habits.forEach(idea => {
+        html += `<li>
+          ${idea.name} 
+          <button class="activate-idea" data-habit-id="${idea.id}">Активировать</button>
+        </li>`;
+      });
+    }
     html += '</ul>';
     
     const ideasContent = this.ideasPanel.querySelector('.ideas-content');

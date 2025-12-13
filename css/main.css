@@ -158,6 +158,22 @@ body {
   background-color: #e07d3a;
 }
 
+.activate-idea {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.activate-idea:hover {
+  background-color: #e07d3a;
+}
+
 .secondary-button {
   background-color: transparent;
   color: var(--text-color);
@@ -240,6 +256,14 @@ body {
 .ideas-content {
   padding: 1rem;
   min-height: 100px;
+}
+
+.ideas-panel.collapsed .ideas-content {
+  display: none;
+}
+
+.ideas-panel.collapsed .panel-header {
+  border-radius: 8px;
 }
 
 .app-footer {
