@@ -812,6 +812,14 @@ class UIManager {
   bindHabitCellEvents() {
     // Bind checkbox clicks
     document.querySelectorAll('.checkbox-cell').forEach(cell => {
+      // Check if event listener is already attached
+      if (cell.dataset.listenerAttached === 'true') {
+        return;
+      }
+      
+      // Mark that event listener is attached
+      cell.dataset.listenerAttached = 'true';
+      
       cell.addEventListener('click', (e) => {
         const habitId = cell.dataset.habitId;
         const date = cell.dataset.date;
@@ -829,7 +837,8 @@ class UIManager {
           const partsCount = parseInt(habit.type.split('_')[1]);
           
           // Initialize parts array if needed
-          let parts = entry && entry.checkboxState.parts ? [...entry.checkboxState.parts] : Array(partsCount).fill(false);
+          let parts = entry && entry.checkboxState.parts && entry.checkboxState.parts.length === partsCount ? 
+            [...entry.checkboxState.parts] : Array(partsCount).fill(false);
           
           // Find the first unchecked part and check it
           let partChecked = false;
@@ -846,14 +855,26 @@ class UIManager {
             parts = Array(partsCount).fill(false);
           }
           
-          // Save the updated entry
-          entryManager.updateEntry(habitId, date, {
-            checkboxState: {
-              completed: parts.every(p => p), // Completed if all parts are checked
-              failed: false,
-              parts: parts
-            }
-          });
+          // Create or update the entry
+          if (entry) {
+            // Update existing entry
+            entryManager.updateEntry(habitId, date, {
+              checkboxState: {
+                completed: parts.every(p => p), // Completed if all parts are checked
+                failed: false,
+                parts: parts
+              }
+            });
+          } else {
+            // Create new entry
+            entryManager.createEntry(habitId, date, {
+              checkboxState: {
+                completed: parts.every(p => p), // Completed if all parts are checked
+                failed: false,
+                parts: parts
+              }
+            });
+          }
         }
         
         this.render();
@@ -862,6 +883,14 @@ class UIManager {
     
     // Bind emoji cell clicks
     document.querySelectorAll('.emoji-cell').forEach(cell => {
+      // Check if event listener is already attached
+      if (cell.dataset.listenerAttached === 'true') {
+        return;
+      }
+      
+      // Mark that event listener is attached
+      cell.dataset.listenerAttached = 'true';
+      
       cell.addEventListener('click', (e) => {
         const habitId = cell.dataset.habitId;
         const date = cell.dataset.date;
@@ -887,6 +916,14 @@ class UIManager {
     
     // Bind comment icon clicks
     document.querySelectorAll('.comment-icon').forEach(icon => {
+      // Check if event listener is already attached
+      if (icon.dataset.listenerAttached === 'true') {
+        return;
+      }
+      
+      // Mark that event listener is attached
+      icon.dataset.listenerAttached = 'true';
+      
       icon.addEventListener('click', (e) => {
         e.stopPropagation();
         const cell = icon.closest('td');
@@ -898,6 +935,14 @@ class UIManager {
     
     // Bind text input changes with debounce
     document.querySelectorAll('.text-cell input').forEach(input => {
+      // Check if event listener is already attached
+      if (input.dataset.listenerAttached === 'true') {
+        return;
+      }
+      
+      // Mark that event listener is attached
+      input.dataset.listenerAttached = 'true';
+      
       let timeoutId;
       input.addEventListener('input', (e) => {
         clearTimeout(timeoutId);
