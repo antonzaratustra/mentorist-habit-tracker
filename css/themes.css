@@ -1,0 +1,44 @@
+/* Theme styles for Habit Tracker */
+
+/* Light Theme */
+.theme-light {
+  --bg-color: #FFF5E6;
+  --accent-color: #FF8C42;
+  --text-color: #2C2C2C;
+  --row-even: #FFFFFF;
+  --row-odd: #FFE5CC;
+  --border-color: #E0CFC2;
+  --success-color: #FF8C42;
+  --fail-color: #D64545;
+  --partial-color: linear-gradient(45deg, #FF8C42, #FFB178);
+  --highlight-color: rgba(255, 140, 66, 0.2);
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --modal-bg: rgba(255, 245, 230, 0.95);
+}
+
+/* Dark Theme */
+.theme-dark {
+  --bg-color: #1A1A1A;
+  --accent-color: #FF8C42;
+  --text-color: #E0E0E0;
+  --row-even: #242424;
+  --row-odd: #2D2416;
+  --border-color: #3A3A3A;
+  --success-color: #FF8C42;
+  --fail-color: #D64545;
+  --partial-color: linear-gradient(45deg, #FF8C42, #FFB178);
+  --highlight-color: rgba(255, 140, 66, 0.2);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --modal-bg: rgba(26, 26, 26, 0.95);
+}
+
+/* Ensure theme variables are applied */
+body.theme-light {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.theme-dark {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}

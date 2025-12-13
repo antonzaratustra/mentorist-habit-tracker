@@ -1,0 +1,687 @@
+/* Main CSS for Habit Tracker */
+
+/* Light Theme */
+.theme-light {
+  --bg-color: #FFF5E6;
+  --accent-color: #FF8C42;
+  --text-color: #2C2C2C;
+  --row-even: #FFFFFF;
+  --row-odd: #FFE5CC;
+  --border-color: #E0CFC2;
+  --success-color: #FF8C42;
+  --fail-color: #D64545;
+  --partial-color: linear-gradient(45deg, #FF8C42, #FFB178);
+  --highlight-color: rgba(255, 140, 66, 0.3);
+  --completed-week-color: rgba(255, 140, 66, 0.4);
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --modal-bg: rgba(255, 245, 230, 0.95);
+}
+
+/* Dark Theme */
+.theme-dark {
+  --bg-color: #1A1A1A;
+  --accent-color: #FF8C42;
+  --text-color: #E0E0E0;
+  --row-even: #242424;
+  --row-odd: #2D2416;
+  --border-color: #3A3A3A;
+  --success-color: #FF8C42;
+  --fail-color: #D64545;
+  --partial-color: linear-gradient(45deg, #FF8C42, #FFB178);
+  --highlight-color: rgba(255, 140, 66, 0.3);
+  --completed-week-color: rgba(255, 140, 66, 0.4);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --modal-bg: rgba(26, 26, 26, 0.95);
+  --inactive-button-color: #E0E0E0; /* Белый цвет для неактивных кнопок в темной теме */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+
+.app-header {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 1rem;
+  box-shadow: 0 2px 5px var(--shadow-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-content h1 {
+  font-size: 1.5rem;
+}
+
+.current-date {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.app-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--row-even);
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+}
+
+.primary-button {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.primary-button:hover {
+  background-color: #e07d3a;
+}
+
+.secondary-button {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.secondary-button:hover {
+  background-color: var(--row-odd);
+}
+
+.view-switcher {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-color); /* Используем переменную цвета текста */
+}
+
+.view-btn.active {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filters select {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--row-even);
+  color: var(--text-color);
+}
+
+.app-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.habit-table-container {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  background-color: var(--row-even);
+}
+
+.ideas-panel {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  background-color: var(--row-even);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.ideas-content {
+  padding: 1rem;
+  min-height: 100px;
+}
+
+.app-footer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background-color: var(--row-even);
+  border-top: 1px solid var(--border-color);
+}
+
+.stats-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stats-summary span {
+  font-weight: bold;
+}
+
+.nav-button {
+  background: none;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: var(--text-color); /* Используем переменную цвета текста */
+}
+
+.nav-button:hover {
+  background-color: var(--row-odd);
+}
+
+/* Day View Styles */
+.day-view {
+  padding: 1rem;
+}
+
+.time-group {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: var(--row-even);
+  box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+.time-group.active {
+  border-left: 4px solid var(--accent-color);
+  background-color: var(--row-odd);
+}
+
+.time-group h3 {
+  margin: -1rem -1rem 1rem -1rem;
+  padding: 1rem;
+  border-radius: 8px 8px 0 0;
+  background-color: var(--accent-color);
+  color: white;
+  font-weight: bold;
+}
+
+.day-habits-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.day-habits-table th,
+.day-habits-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.day-habits-table th {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.day-habits-table tr:nth-child(even) {
+  background-color: var(--row-even);
+}
+
+.day-habits-table tr:nth-child(odd) {
+  background-color: var(--row-odd);
+}
+
+/* Month View Styles */
+.month-view {
+  padding: 1rem;
+}
+
+.month-view h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.month-calendar {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.month-calendar th {
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.month-calendar td {
+  height: 80px;
+  vertical-align: top;
+  border: 1px solid var(--border-color);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.month-calendar td:hover {
+  background-color: var(--row-odd);
+}
+
+.calendar-day {
+  background-color: var(--row-even);
+}
+
+.calendar-day.today {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.calendar-day.completed {
+  background-color: rgba(255, 140, 66, 0.3);
+}
+
+.calendar-day.partial {
+  background-color: rgba(255, 140, 66, 0.2);
+}
+
+.calendar-day.started {
+  background-color: rgba(255, 140, 66, 0.1);
+}
+
+.empty-day {
+  background-color: var(--row-odd);
+}
+
+.day-number {
+  font-weight: bold;
+  padding: 0.25rem;
+}
+
+.completion-info {
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 0.1rem;
+}
+
+.completion-bar {
+  height: 4px;
+  background-color: var(--accent-color);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.week-summary-row td {
+  height: 30px;
+  vertical-align: middle;
+  border: 1px solid var(--border-color);
+  background-color: var(--row-odd);
+}
+
+.week-summary-cell {
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.week-summary-cell.empty {
+  background-color: var(--row-even);
+}
+
+.habit-completion-count {
+  font-weight: bold;
+}
+
+/* Table Styles */
+.habit-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.habit-table th,
+.habit-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.habit-table th {
+  background-color: var(--accent-color);
+  color: white;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+}
+
+.habit-table tr:nth-child(even) {
+  background-color: var(--row-even);
+}
+
+.habit-table tr:nth-child(odd) {
+  background-color: var(--row-odd);
+}
+
+.habit-table tr.completed-week {
+  background-color: var(--completed-week-color) !important;
+  animation: highlight 2s ease;
+}
+
+.completed-day-header {
+  background-color: var(--completed-week-color) !important;
+}
+
+.habit-cell {
+  position: relative;
+  min-width: 50px;
+}
+
+.habit-name-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.habit-name {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time-tag {
+  font-size: 0.8rem;
+  background-color: var(--accent-color);
+  color: white;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.habit-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.edit-habit-btn, .delete-habit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.edit-habit-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.delete-habit-btn:hover {
+  background-color: rgba(214, 69, 69, 0.2);
+}
+
+.restore-habit-btn, .permanently-delete-habit-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s;
+}
+
+.restore-habit-btn:hover {
+  background-color: rgba(0, 128, 0, 0.1);
+}
+
+.permanently-delete-habit-btn:hover {
+  background-color: rgba(214, 69, 69, 0.2);
+}
+
+.checkbox-cell {
+  text-align: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+.checkbox-cell:hover {
+  opacity: 0.8;
+}
+
+.text-cell input {
+  width: 100%;
+  padding: 0.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--row-even);
+  color: var(--text-color);
+}
+
+.emoji-cell {
+  text-align: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.comment-icon {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.comment-icon:hover {
+  opacity: 1;
+}
+
+.completed-day {
+  background-color: var(--highlight-color);
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: var(--modal-bg);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.form-group {
+  margin: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--row-even);
+  color: var(--text-color);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+.day-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.day-details-table th,
+.day-details-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.day-details-table th {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.day-details-table tr:nth-child(even) {
+  background-color: var(--row-even);
+}
+
+.day-details-table tr:nth-child(odd) {
+  background-color: var(--row-odd);
+}
+
+.time-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Animations */
+@keyframes highlight {
+  0% { background-color: rgba(255, 140, 66, 0); }
+  50% { background-color: rgba(255, 140, 66, 0.4); }
+  100% { background-color: rgba(255, 140, 66, 0.2); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filters {
+    justify-content: center;
+  }
+  
+  .app-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .habit-table-container {
+    overflow-x: auto;
+  }
+  
+  .habit-table th,
+  .habit-table td {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}

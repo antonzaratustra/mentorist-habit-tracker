@@ -1,0 +1,1254 @@
+// UI module for Habit Tracker
+
+class UIManager {
+  constructor() {
+    this.currentView = 'week';
+    this.currentWeekStart = new Date();
+    this.filters = {
+      status: 'active',
+      tag: '',
+      timeOfDay: '',
+      type: ''
+    };
+    this.sortBy = 'strength';
+    
+    this.initializeElements();
+    this.bindEvents();
+    this.render();
+  }
+
+  /**
+   * Initialize DOM elements
+   */
+  initializeElements() {
+    // Header elements
+    this.currentDateEl = document.getElementById('current-date');
+    
+    // Navigation elements
+    this.addViewBtn = document.getElementById('add-habit-btn');
+    this.viewButtons = document.querySelectorAll('.view-btn');
+    this.prevWeekBtn = document.getElementById('prev-week');
+    this.nextWeekBtn = document.getElementById('next-week');
+    this.weekRangeEl = document.getElementById('week-range');
+    
+    // Filter elements
+    this.filterTags = document.getElementById('filter-tags');
+    this.filterTime = document.getElementById('filter-time');
+    this.filterType = document.getElementById('filter-type');
+    this.filterStatus = document.getElementById('filter-status');
+    
+    // Main content
+    this.habitTableContainer = document.getElementById('habit-table-container');
+    this.ideasPanel = document.getElementById('ideas-panel');
+    this.toggleIdeasBtn = document.getElementById('toggle-ideas');
+    
+    // Modals
+    this.habitModal = document.getElementById('habit-modal');
+    this.commentModal = document.getElementById('comment-modal');
+    
+    // Stats
+    this.dailyStatsEl = document.getElementById('daily-stats');
+  }
+
+  /**
+   * Bind event listeners
+   */
+  bindEvents() {
+    // View switching
+    this.viewButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        this.switchView(e.target.dataset.view);
+      });
+    });
+    
+    // Navigation
+    if (this.addViewBtn) {
+      this.addViewBtn.addEventListener('click', () => this.openHabitModal());
+    }
+    
+    if (this.prevWeekBtn) {
+      this.prevWeekBtn.addEventListener('click', () => this.navigateWeek(-1));
+    }
+    
+    if (this.nextWeekBtn) {
+      this.nextWeekBtn.addEventListener('click', () => this.navigateWeek(1));
+    }
+    
+    // Filters
+    if (this.filterTags) {
+      this.filterTags.addEventListener('change', (e) => {
+        this.filters.tag = e.target.value;
+        this.render();
+      });
+    }
+    
+    if (this.filterTime) {
+      this.filterTime.addEventListener('change', (e) => {
+        this.filters.timeOfDay = e.target.value;
+        this.render();
+      });
+    }
+    
+    if (this.filterType) {
+      this.filterType.addEventListener('change', (e) => {
+        this.filters.type = e.target.value;
+        this.render();
+      });
+    }
+    
+    if (this.filterStatus) {
+      this.filterStatus.addEventListener('change', (e) => {
+        this.filters.status = e.target.value;
+        this.render();
+      });
+    }
+    
+    // Ideas panel
+    if (this.toggleIdeasBtn) {
+      this.toggleIdeasBtn.addEventListener('click', () => {
+        this.ideasPanel.classList.toggle('collapsed');
+      });
+    }
+    
+    // Habit form
+    const habitForm = document.getElementById('habit-form');
+    if (habitForm) {
+      console.log('Binding habit form submit event');
+      habitForm.addEventListener('submit', (e) => this.handleHabitFormSubmit(e));
+    } else {
+      console.log('Habit form not found');
+    }
+    
+    const cancelHabitBtn = document.getElementById('cancel-habit');
+    if (cancelHabitBtn) {
+      cancelHabitBtn.addEventListener('click', () => {
+        this.closeHabitModal();
+      });
+    }
+    
+    const closeHabitModalBtn = document.querySelector('#habit-modal .close-button');
+    if (closeHabitModalBtn) {
+      closeHabitModalBtn.addEventListener('click', () => {
+        this.closeHabitModal();
+      });
+    }
+    
+    // Comment form
+    const commentForm = document.getElementById('comment-form');
+    if (commentForm) {
+      commentForm.addEventListener('submit', (e) => this.handleCommentFormSubmit(e));
+    }
+    
+    const cancelCommentBtn = document.getElementById('cancel-comment');
+    if (cancelCommentBtn) {
+      cancelCommentBtn.addEventListener('click', () => {
+        this.closeCommentModal();
+      });
+    }
+    
+    const closeCommentModalBtn = document.querySelector('#comment-modal .close-button');
+    if (closeCommentModalBtn) {
+      closeCommentModalBtn.addEventListener('click', () => {
+        this.closeCommentModal();
+      });
+    }
+    
+    // Day details modal
+    const closeDayDetailsModalBtn = document.querySelector('#day-details-modal .close-button');
+    if (closeDayDetailsModalBtn) {
+      closeDayDetailsModalBtn.addEventListener('click', () => {
+        document.getElementById('day-details-modal').classList.add('hidden');
+      });
+    }
+    
+    // Habit type change
+    const habitTypeSelect = document.getElementById('habit-type');
+    if (habitTypeSelect) {
+      habitTypeSelect.addEventListener('change', (e) => {
+        this.toggleEmojiOptions(e.target.value);
+      });
+    }
+  }
+
+  /**
+   * Switch between views
+   * @param {string} view - View to switch to
+   */
+  switchView(view) {
+    this.currentView = view;
+    
+    // Update active button
+    this.viewButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === view);
+    });
+    
+    this.render();
+  }
+
+  /**
+   * Navigate between weeks
+   * @param {number} direction - Direction to navigate (-1 for previous, 1 for next)
+   */
+  navigateWeek(direction) {
+    this.currentWeekStart.setDate(this.currentWeekStart.getDate() + (direction * 7));
+    this.render();
+  }
+
+  /**
+   * Open habit creation/edit modal
+   * @param {Object} habit - Habit to edit (optional)
+   */
+  openHabitModal(habit = null) {
+    const modalTitle = document.getElementById('modal-title');
+    const habitForm = document.getElementById('habit-form');
+    
+    // Show/hide archive and move to ideas buttons
+    const archiveBtn = document.getElementById('archive-habit');
+    const moveToIdeasBtn = document.getElementById('move-to-ideas');
+    
+    if (habit) {
+      // Edit existing habit
+      modalTitle.textContent = 'Редактировать привычку';
+      document.getElementById('habit-name').value = habit.name;
+      document.getElementById('habit-type').value = habit.type;
+      this.toggleEmojiOptions(habit.type);
+      
+      if (habit.type === 'emoji' && habit.emojiOptions) {
+        document.getElementById('emoji-options').value = habit.emojiOptions.join(', ');
+      }
+      
+      document.getElementById('habit-tags').value = habit.tags.join(', ');
+      
+      // Populate time of day options
+      this.populateTimeOfDayOptions(habit.type, habit.timeOfDay);
+      
+      // Store habit ID in form data for update
+      habitForm.dataset.habitId = habit.id;
+      
+      // Show archive and move to ideas buttons
+      if (archiveBtn) archiveBtn.style.display = 'inline-block';
+      if (moveToIdeasBtn) moveToIdeasBtn.style.display = 'inline-block';
+      
+      // Bind events for archive and move to ideas buttons
+      if (archiveBtn) {
+        archiveBtn.onclick = () => {
+          if (confirm('Вы уверены, что хотите отправить эту привычку в архив?')) {
+            habitManager.archiveHabit(habit.id);
+            this.closeHabitModal();
+            this.render();
+          }
+        };
+      }
+      
+      if (moveToIdeasBtn) {
+        moveToIdeasBtn.onclick = () => {
+          if (confirm('Вы уверены, что хотите отправить эту привычку в идеи?')) {
+            habitManager.moveToIdeas(habit.id);
+            this.closeHabitModal();
+            this.render();
+          }
+        };
+      }
+    } else {
+      // Create new habit
+      modalTitle.textContent = 'Создать привычку';
+      habitForm.reset();
+      delete habitForm.dataset.habitId;
+      this.toggleEmojiOptions('checkbox');
+      this.populateTimeOfDayOptions('checkbox');
+      
+      // Hide archive and move to ideas buttons
+      if (archiveBtn) archiveBtn.style.display = 'none';
+      if (moveToIdeasBtn) moveToIdeasBtn.style.display = 'none';
+    }
+    
+    this.habitModal.classList.remove('hidden');
+  }
+
+  /**
+   * Populate time of day options based on habit type
+   * @param {string} type - Habit type
+   * @param {Object} timeOfDay - Current time of day settings
+   */
+  populateTimeOfDayOptions(type, timeOfDay = null) {
+    const container = document.getElementById('time-of-day-options');
+    if (!container) return;
+    
+    container.innerHTML = ''; // Clear existing options
+    
+    if (type === 'checkbox') {
+      // Single time of day selection
+      container.innerHTML = `
+        <div class="time-option">
+          <label>
+            <input type="radio" name="time-of-day-single" value="morning" ${(!timeOfDay || timeOfDay.single === 'morning') ? 'checked' : ''}>
+            Утро
+          </label>
+        </div>
+        <div class="time-option">
+          <label>
+            <input type="radio" name="time-of-day-single" value="day" ${(timeOfDay && timeOfDay.single === 'day') ? 'checked' : ''}>
+            День
+          </label>
+        </div>
+        <div class="time-option">
+          <label>
+            <input type="radio" name="time-of-day-single" value="evening" ${(timeOfDay && timeOfDay.single === 'evening') ? 'checked' : ''}>
+            Вечер
+          </label>
+        </div>
+      `;
+    } else if (type.startsWith('checkbox_')) {
+      // Multiple parts time of day selection
+      const partsCount = parseInt(type.split('_')[1]);
+      let html = '<p>Выберите время для каждой части:</p>';
+      
+      for (let i = 0; i < partsCount; i++) {
+        const partTime = timeOfDay && timeOfDay.parts && timeOfDay.parts[i] ? timeOfDay.parts[i].time : 'day';
+        html += `
+          <div class="time-option">
+            <label>Часть ${i + 1}:</label>
+            <select name="time-of-day-part-${i}">
+              <option value="morning" ${partTime === 'morning' ? 'selected' : ''}>Утро</option>
+              <option value="day" ${partTime === 'day' ? 'selected' : ''}>День</option>
+              <option value="evening" ${partTime === 'evening' ? 'selected' : ''}>Вечер</option>
+            </select>
+          </div>
+        `;
+      }
+      
+      container.innerHTML = html;
+    } else {
+      // For text and emoji types, single time selection
+      container.innerHTML = `
+        <div class="time-option">
+          <label>
+            <input type="radio" name="time-of-day-single" value="morning" ${(!timeOfDay || timeOfDay.single === 'morning') ? 'checked' : ''}>
+            Утро
+          </label>
+        </div>
+        <div class="time-option">
+          <label>
+            <input type="radio" name="time-of-day-single" value="day" ${(timeOfDay && timeOfDay.single === 'day') ? 'checked' : ''}>
+            День
+          </label>
+        </div>
+        <div class="time-option">
+          <label>
+            <input type="radio" name="time-of-day-single" value="evening" ${(timeOfDay && timeOfDay.single === 'evening') ? 'checked' : ''}>
+            Вечер
+          </label>
+        </div>
+      `;
+    }
+  }
+
+  /**
+   * Close habit modal
+   */
+  closeHabitModal() {
+    this.habitModal.classList.add('hidden');
+  }
+
+  /**
+   * Handle habit form submission
+   * @param {Event} e - Submit event
+   */
+  handleHabitFormSubmit(e) {
+    e.preventDefault();
+    console.log('Form submitted');
+    
+    const formData = new FormData(e.target);
+    console.log('Form data:', formData);
+    
+    const habitData = {
+      name: formData.get('habit-name'),
+      type: formData.get('habit-type'),
+      tags: formData.get('habit-tags').split(',').map(tag => tag.trim()).filter(tag => tag)
+    };
+    
+    console.log('Habit data before processing:', habitData);
+    
+    if (habitData.type === 'emoji') {
+      habitData.emojiOptions = formData.get('emoji-options')
+        .split(',')
+        .map(emoji => emoji.trim())
+        .filter(emoji => emoji);
+    }
+    
+    // Handle time of day settings
+    if (habitData.type === 'checkbox' || habitData.type === 'text' || habitData.type === 'emoji') {
+      const timeOfDaySingle = formData.get('time-of-day-single') || 'day';
+      habitData.timeOfDay = { single: timeOfDaySingle };
+    } else if (habitData.type.startsWith('checkbox_')) {
+      const partsCount = parseInt(habitData.type.split('_')[1]);
+      const parts = [];
+      
+      for (let i = 0; i < partsCount; i++) {
+        const time = formData.get(`time-of-day-part-${i}`) || 'day';
+        parts.push({ partIndex: i, time: time });
+      }
+      
+      habitData.timeOfDay = { parts: parts };
+    }
+    
+    console.log('Final habit data:', habitData);
+    
+    const habitId = e.target.dataset.habitId;
+    
+    if (habitId) {
+      // Update existing habit
+      console.log('Updating habit:', habitId, habitData);
+      const result = habitManager.updateHabit(habitId, habitData);
+      console.log('Update result:', result);
+    } else {
+      // Create new habit
+      console.log('Creating new habit:', habitData);
+      const result = habitManager.createHabit(habitData);
+      console.log('Create result:', result);
+    }
+    
+    this.closeHabitModal();
+    this.render();
+  }
+
+  /**
+   * Toggle emoji options visibility
+   * @param {string} type - Habit type
+   */
+  toggleEmojiOptions(type) {
+    const emojiGroup = document.getElementById('emoji-options-group');
+    if (emojiGroup) {
+      emojiGroup.style.display = type === 'emoji' ? 'block' : 'none';
+    }
+    
+    // Also update time of day options when type changes
+    this.populateTimeOfDayOptions(type);
+  }
+
+  /**
+   * Open comment modal
+   * @param {string} habitId - Habit ID
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+  openCommentModal(habitId, date) {
+    const entry = entryManager.getEntry(habitId, date);
+    const commentText = document.getElementById('comment-text');
+    
+    if (commentText) {
+      commentText.value = entry ? entry.comment : '';
+    }
+    
+    // Store habit ID and date in form data
+    const commentForm = document.getElementById('comment-form');
+    if (commentForm) {
+      commentForm.dataset.habitId = habitId;
+      commentForm.dataset.date = date;
+    }
+    
+    this.commentModal.classList.remove('hidden');
+  }
+
+  /**
+   * Close comment modal
+   */
+  closeCommentModal() {
+    this.commentModal.classList.add('hidden');
+  }
+
+  /**
+   * Handle comment form submission
+   * @param {Event} e - Submit event
+   */
+  handleCommentFormSubmit(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const habitId = e.target.dataset.habitId;
+    const date = e.target.dataset.date;
+    const comment = formData.get('comment-text');
+    
+    console.log('Saving comment:', { habitId, date, comment });
+    
+    // Save comment
+    entryManager.setComment(habitId, date, comment);
+    
+    this.closeCommentModal();
+    this.render();
+  }
+
+  /**
+   * Render the current view
+   */
+  render() {
+    this.updateHeader();
+    this.updateFilters();
+    
+    switch (this.currentView) {
+      case 'week':
+        this.renderWeekView();
+        break;
+      case 'day':
+        this.renderDayView();
+        break;
+      case 'month':
+        this.renderMonthView();
+        break;
+    }
+    
+    this.renderIdeasPanel();
+    this.updateStats();
+  }
+
+  /**
+   * Update header information
+   */
+  updateHeader() {
+    const now = new Date();
+    this.currentDateEl.textContent = now.toLocaleDateString('ru-RU', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    // Update week range
+    const weekDates = getWeekDates(this.currentWeekStart);
+    const firstDate = new Date(weekDates[0]);
+    const lastDate = new Date(weekDates[6]);
+    
+    this.weekRangeEl.textContent = `Неделя: ${firstDate.getDate()}-${lastDate.getDate()} ${lastDate.toLocaleDateString('ru-RU', { month: 'long' })}`;
+  }
+
+  /**
+   * Update filter options
+   */
+  updateFilters() {
+    // Update tags dropdown
+    const allHabits = habitManager.getAllHabits();
+    const tags = filterManager.getAllTags(allHabits);
+    
+    // Clear and repopulate tags dropdown
+    this.filterTags.innerHTML = '<option value="">Все теги</option>';
+    tags.forEach(tag => {
+      const option = document.createElement('option');
+      option.value = tag;
+      option.textContent = tag;
+      this.filterTags.appendChild(option);
+    });
+    
+    // Set selected values
+    this.filterTags.value = this.filters.tag;
+    this.filterTime.value = this.filters.timeOfDay;
+    this.filterType.value = this.filters.type;
+    this.filterStatus.value = this.filters.status;
+  }
+
+  /**
+   * Render week view
+   */
+  renderWeekView() {
+    const weekDates = getWeekDates(this.currentWeekStart);
+    const habits = this.getFilteredAndSortedHabits();
+    
+    // Check which days are fully completed
+    const completedDays = {};
+    weekDates.forEach(date => {
+      const dailyStats = statsManager.getDailyStats(date);
+      completedDays[date] = dailyStats.percentage === 100;
+    });
+    
+    let html = `
+      <table class="habit-table">
+        <thead>
+          <tr>
+            <th>Привычка</th>
+    `;
+    
+    // Add day headers
+    weekDates.forEach(date => {
+      const dayDate = new Date(date);
+      const isCompleted = completedDays[date];
+      const dayClass = isCompleted ? 'completed-day-header' : '';
+      html += `<th class="${dayClass}">${dayDate.toLocaleDateString('ru-RU', { weekday: 'short' })}<br>${dayDate.getDate()}</th>`;
+    });
+    
+    html += `
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    // Add habit rows
+    habits.forEach((habit, index) => {
+      // Check if habit is fully completed for the week
+      let completedParts = 0;
+      let totalParts = weekDates.length;
+      
+      weekDates.forEach(date => {
+        const entry = entryManager.getEntry(habit.id, date);
+        if (entry) {
+          if (habit.type === 'checkbox' && entry.checkboxState.completed) {
+            completedParts++;
+          } else if (habit.type.startsWith('checkbox_')) {
+            const partsCount = parseInt(habit.type.split('_')[1]);
+            const filledParts = entry.checkboxState.parts ? 
+              entry.checkboxState.parts.filter(Boolean).length : 0;
+            if (filledParts === partsCount) {
+              completedParts++;
+            }
+          } else if (habit.type === 'text' && entry.textValue.trim() !== '') {
+            completedParts++;
+          } else if (habit.type === 'emoji' && entry.emojiValue.trim() !== '') {
+            completedParts++;
+          }
+        }
+      });
+      
+      const isWeekCompleted = completedParts === totalParts;
+      const rowClass = isWeekCompleted ? 'completed-week' : '';
+      
+      html += `<tr class="${rowClass} ${index % 2 === 0 ? 'even' : 'odd'}" data-habit-id="${habit.id}">`;
+      html += `<td class="habit-name-cell">`;
+      html += `<span class="habit-name">${habit.name}</span>`;
+      html += `<span class="habit-time-info">${this.getHabitTimeInfo(habit)}</span>`;
+      
+      // Show different actions based on habit status
+      if (habit.status === 'trash') {
+        html += `<div class="habit-actions">`;
+        html += `<button class="restore-habit-btn" data-habit-id="${habit.id}">Восстановить</button>`;
+        html += `<button class="permanently-delete-habit-btn" data-habit-id="${habit.id}">Удалить</button>`;
+        html += `</div>`;
+      } else {
+        html += `<div class="habit-actions">`;
+        html += `<button class="edit-habit-btn" data-habit-id="${habit.id}">✏️</button>`;
+        html += `<button class="delete-habit-btn" data-habit-id="${habit.id}">🗑️</button>`;
+        html += `</div>`;
+      }
+      
+      html += `</td>`;
+      
+      // Add cells for each day
+      weekDates.forEach(date => {
+        html += this.renderHabitCell(habit, date);
+      });
+      
+      html += '</tr>';
+    });
+    
+    html += `
+        </tbody>
+      </table>
+    `;
+    
+    this.habitTableContainer.innerHTML = html;
+    this.bindHabitCellEvents();
+    this.bindHabitActionEvents();
+  }
+
+  /**
+   * Get time info for habit
+   * @param {Object} habit - Habit object
+   * @returns {string} Time info string
+   */
+  getHabitTimeInfo(habit) {
+    if (habit.timeOfDay.single) {
+      const timeLabels = {
+        'morning': '🌅 Утро',
+        'day': '☀️ День',
+        'evening': '🌙 Вечер'
+      };
+      return `<span class="time-tag">${timeLabels[habit.timeOfDay.single] || habit.timeOfDay.single}</span>`;
+    } else if (habit.timeOfDay.parts) {
+      const timeLabels = {
+        'morning': '🌅',
+        'day': '☀️',
+        'evening': '🌙'
+      };
+      
+      const times = habit.timeOfDay.parts.map(part => timeLabels[part.time] || part.time);
+      // Remove duplicates
+      const uniqueTimes = [...new Set(times)];
+      return `<span class="time-tag">${uniqueTimes.join(' ')}</span>`;
+    }
+    return '';
+  }
+
+  /**
+   * Render a single habit cell
+   * @param {Object} habit - Habit object
+   * @param {string} date - Date in YYYY-MM-DD format
+   * @returns {string} HTML for the cell
+   */
+  renderHabitCell(habit, date) {
+    const entry = entryManager.getEntry(habit.id, date);
+    let cellContent = '';
+    let cellClass = 'habit-cell';
+    
+    switch (habit.type) {
+      case 'checkbox':
+        cellClass += ' checkbox-cell';
+        if (entry) {
+          if (entry.checkboxState.completed) {
+            cellContent = '☑';
+          } else if (entry.checkboxState.failed) {
+            cellContent = '☒';
+          } else {
+            cellContent = '☐';
+          }
+        } else {
+          cellContent = '☐';
+        }
+        break;
+        
+      case 'text':
+        cellClass += ' text-cell';
+        cellContent = `<input type="text" 
+          value="${entry ? entry.textValue : ''}" 
+          data-habit-id="${habit.id}" 
+          data-date="${date}"
+          placeholder="Введите значение">`;
+        break;
+        
+      case 'emoji':
+        cellClass += ' emoji-cell';
+        if (entry && entry.emojiValue) {
+          cellContent = entry.emojiValue;
+        } else {
+          cellContent = '🙂';
+        }
+        break;
+        
+      case 'checkbox_2':
+      case 'checkbox_3':
+      case 'checkbox_4':
+        cellClass += ' checkbox-cell';
+        if (entry) {
+          const partsCount = parseInt(habit.type.split('_')[1]);
+          const filledParts = entry.checkboxState.parts ? 
+            entry.checkboxState.parts.filter(Boolean).length : 0;
+          cellContent = `${filledParts}/${partsCount}`;
+        } else {
+          cellContent = `0/${habit.type.split('_')[1]}`;
+        }
+        break;
+    }
+    
+    // Add comment icon if there's a comment
+    if (entry && entry.comment && entry.comment.trim() !== '') {
+      cellContent += `<span class="comment-icon" title="${entry.comment}">ℹ️</span>`;
+    } else {
+      cellContent += '<span class="comment-icon">ℹ️</span>';
+    }
+    
+    return `<td class="${cellClass}" data-habit-id="${habit.id}" data-date="${date}">${cellContent}</td>`;
+  }
+
+  /**
+   * Bind events to habit cells
+   */
+  bindHabitCellEvents() {
+    // Bind checkbox clicks
+    document.querySelectorAll('.checkbox-cell').forEach(cell => {
+      cell.addEventListener('click', (e) => {
+        const habitId = cell.dataset.habitId;
+        const date = cell.dataset.date;
+        
+        // Get the habit to determine its type
+        const habit = habitManager.getHabitById(habitId);
+        if (!habit) return;
+        
+        if (habit.type === 'checkbox') {
+          // Simple checkbox toggle
+          entryManager.toggleCheckboxState(habitId, date);
+        } else if (habit.type.startsWith('checkbox_')) {
+          // Multi-part checkbox - we need to determine which part to toggle
+          const entry = entryManager.getEntry(habitId, date);
+          const partsCount = parseInt(habit.type.split('_')[1]);
+          
+          // Initialize parts array if needed
+          let parts = entry && entry.checkboxState.parts ? [...entry.checkboxState.parts] : Array(partsCount).fill(false);
+          
+          // Find the first unchecked part and check it
+          let partChecked = false;
+          for (let i = 0; i < parts.length; i++) {
+            if (!parts[i]) {
+              parts[i] = true;
+              partChecked = true;
+              break;
+            }
+          }
+          
+          // If all parts were checked, uncheck all
+          if (!partChecked) {
+            parts = Array(partsCount).fill(false);
+          }
+          
+          // Save the updated entry
+          entryManager.updateEntry(habitId, date, {
+            checkboxState: {
+              completed: parts.every(p => p), // Completed if all parts are checked
+              failed: false,
+              parts: parts
+            }
+          });
+        }
+        
+        this.render();
+      });
+    });
+    
+    // Bind emoji cell clicks
+    document.querySelectorAll('.emoji-cell').forEach(cell => {
+      cell.addEventListener('click', (e) => {
+        const habitId = cell.dataset.habitId;
+        const date = cell.dataset.date;
+        
+        // Get the habit to determine available emojis
+        const habit = habitManager.getHabitById(habitId);
+        if (!habit || !habit.emojiOptions || habit.emojiOptions.length === 0) return;
+        
+        // Get current entry
+        const entry = entryManager.getEntry(habitId, date);
+        const currentEmoji = entry && entry.emojiValue ? entry.emojiValue : '';
+        
+        // Find next emoji in the list
+        const currentIndex = habit.emojiOptions.indexOf(currentEmoji);
+        const nextIndex = (currentIndex + 1) % habit.emojiOptions.length;
+        const nextEmoji = habit.emojiOptions[nextIndex];
+        
+        // Save new emoji
+        entryManager.setEmojiValue(habitId, date, nextEmoji);
+        this.render();
+      });
+    });
+    
+    // Bind comment icon clicks
+    document.querySelectorAll('.comment-icon').forEach(icon => {
+      icon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const cell = icon.closest('td');
+        const habitId = cell.dataset.habitId;
+        const date = cell.dataset.date;
+        this.openCommentModal(habitId, date);
+      });
+    });
+    
+    // Bind text input changes with debounce
+    document.querySelectorAll('.text-cell input').forEach(input => {
+      let timeoutId;
+      input.addEventListener('input', (e) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          const habitId = input.dataset.habitId;
+          const date = input.dataset.date;
+          const value = input.value;
+          entryManager.setTextValue(habitId, date, value);
+        }, 500); // 500ms debounce
+      });
+    });
+  }
+
+  /**
+   * Bind events for habit action buttons
+   */
+  bindHabitActionEvents() {
+    // Bind edit buttons
+    document.querySelectorAll('.edit-habit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const habitId = btn.dataset.habitId;
+        const habit = habitManager.getHabitById(habitId);
+        if (habit) {
+          this.openHabitModal(habit);
+        }
+      });
+    });
+    
+    // Bind delete buttons
+    document.querySelectorAll('.delete-habit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const habitId = btn.dataset.habitId;
+        if (confirm('Вы уверены, что хотите удалить эту привычку?')) {
+          habitManager.deleteHabit(habitId);
+          this.render();
+        }
+      });
+    });
+    
+    // Bind restore buttons (for trashed habits)
+    document.querySelectorAll('.restore-habit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const habitId = btn.dataset.habitId;
+        habitManager.restoreHabit(habitId, 'active');
+        this.render();
+      });
+    });
+    
+    // Bind permanent delete buttons (for trashed habits)
+    document.querySelectorAll('.permanently-delete-habit-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const habitId = btn.dataset.habitId;
+        if (confirm('Вы уверены, что хотите окончательно удалить эту привычку?')) {
+          habitManager.permanentlyDeleteHabit(habitId);
+          this.render();
+        }
+      });
+    });
+  }
+
+  /**
+   * Render day view
+   */
+  renderDayView() {
+    const today = getCurrentDate();
+    const habits = this.getFilteredAndSortedHabits();
+    
+    // Get current hour to determine active time period
+    const currentHour = new Date().getHours();
+    let activeTimePeriod = 'day';
+    if (currentHour < 12) {
+      activeTimePeriod = 'morning';
+    } else if (currentHour >= 18) {
+      activeTimePeriod = 'evening';
+    }
+    
+    let html = '<div class="day-view">';
+    
+    // Group habits by time of day
+    const timeGroups = {
+      morning: { habits: [], label: 'УТРО ☀️' },
+      day: { habits: [], label: 'ДЕНЬ ☼' },
+      evening: { habits: [], label: 'ВЕЧЕР 🌙' }
+    };
+    
+    habits.forEach(habit => {
+      if (habit.timeOfDay.single) {
+        timeGroups[habit.timeOfDay.single].habits.push(habit);
+      } else if (habit.timeOfDay.parts) {
+        // For multi-part habits, add to each time group
+        habit.timeOfDay.parts.forEach(part => {
+          if (timeGroups[part.time]) {
+            timeGroups[part.time].habits.push({...habit, partIndex: part.partIndex});
+          }
+        });
+      }
+    });
+    
+    // Render each time group
+    ['morning', 'day', 'evening'].forEach(time => {
+      if (timeGroups[time].habits.length > 0) {
+        const isActive = time === activeTimePeriod;
+        html += `<div class="time-group ${isActive ? 'active' : ''}">`;
+        html += `<h3>${timeGroups[time].label}</h3>`;
+        
+        // Create a table for better presentation WITHOUT headers as requested
+        html += '<table class="day-habits-table">';
+        html += '<tbody>';
+        
+        timeGroups[time].habits.forEach((habit, index) => {
+          html += `<tr class="${index % 2 === 0 ? 'even' : 'odd'}">`;
+          html += `<td>${habit.name}</td>`;
+          html += `<td>${this.renderHabitCell(habit, today)}</td>`;
+          html += '</tr>';
+        });
+        
+        html += '</tbody></table>';
+        html += '</div>';
+      }
+    });
+    
+    html += '</div>';
+    
+    this.habitTableContainer.innerHTML = html;
+    this.bindHabitCellEvents();
+  }
+
+  /**
+   * Get label for time of day
+   * @param {string} time - Time of day
+   * @returns {string} Label
+   */
+  getTimeLabel(time) {
+    switch (time) {
+      case 'morning': return 'УТРО';
+      case 'day': return 'ДЕНЬ';
+      case 'evening': return 'ВЕЧЕР';
+      default: return time;
+    }
+  }
+
+  /**
+   * Render month view
+   */
+  renderMonthView() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    // Get first day of month and last day of month
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    
+    // Get all dates in month
+    const dates = [];
+    for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
+      dates.push(new Date(d));
+    }
+    
+    // Group dates by week
+    const weeks = [];
+    let currentWeek = [];
+    
+    // Add empty cells for days before first day of month
+    const firstDayOfWeek = firstDay.getDay();
+    const offset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1; // Adjust for Monday as first day
+    
+    for (let i = 0; i < offset; i++) {
+      currentWeek.push(null);
+    }
+    
+    dates.forEach(date => {
+      currentWeek.push(date);
+      
+      // If we've reached the end of the week or the end of the month
+      if (currentWeek.length === 7) {
+        weeks.push([...currentWeek]);
+        currentWeek = [];
+      }
+    });
+    
+    // Add remaining days to complete the last week
+    if (currentWeek.length > 0) {
+      while (currentWeek.length < 7) {
+        currentWeek.push(null);
+      }
+      weeks.push(currentWeek);
+    }
+    
+    let html = `<div class="month-view">`;
+    html += `<h2>${now.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}</h2>`;
+    
+    // Create calendar table
+    html += `<table class="month-calendar">`;
+    html += `<thead><tr>`;
+    ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
+      html += `<th>${day}</th>`;
+    });
+    html += `</tr></thead>`;
+    html += `<tbody>`;
+    
+    weeks.forEach((week, weekIndex) => {
+      html += `<tr>`;
+      week.forEach(date => {
+        if (date === null) {
+          html += `<td class="empty-day"></td>`;
+        } else {
+          const dateStr = formatDate(date);
+          const dailyStats = statsManager.getDailyStats(dateStr);
+          const completionPercentage = dailyStats.percentage;
+          
+          // Determine cell class based on completion
+          let cellClass = 'calendar-day';
+          if (completionPercentage === 100) {
+            cellClass += ' completed';
+          } else if (completionPercentage >= 50) {
+            cellClass += ' partial';
+          } else if (completionPercentage > 0) {
+            cellClass += ' started';
+          } else {
+            cellClass += ' empty';
+          }
+          
+          // Check if it's today
+          const isToday = formatDate(new Date()) === dateStr;
+          if (isToday) {
+            cellClass += ' today';
+          }
+          
+          html += `<td class="${cellClass}" data-date="${dateStr}">`;
+          html += `<div class="day-number">${date.getDate()}</div>`;
+          html += `<div class="completion-info">${completionPercentage}%</div>`;
+          html += `<div class="completion-bar" style="width: ${completionPercentage}%"></div>`;
+          html += `</td>`;
+        }
+      });
+      html += `</tr>`;
+      
+      // Add week summary row
+      html += `<tr class="week-summary-row">`;
+      week.forEach(date => {
+        if (date === null) {
+          html += `<td class="week-summary-cell empty"></td>`;
+        } else {
+          const dateStr = formatDate(date);
+          const dailyStats = statsManager.getDailyStats(dateStr);
+          
+          html += `<td class="week-summary-cell">`;
+          html += `<div class="habit-completion-count">${dailyStats.completed}/${dailyStats.totalHabits}</div>`;
+          html += `</td>`;
+        }
+      });
+      html += `</tr>`;
+    });
+    
+    html += `</tbody></table>`;
+    html += `</div>`;
+    
+    this.habitTableContainer.innerHTML = html;
+    
+    // Add click handlers for calendar days
+    document.querySelectorAll('.calendar-day').forEach(cell => {
+      cell.addEventListener('click', (e) => {
+        const date = cell.dataset.date;
+        this.showDayDetails(date);
+      });
+    });
+  }
+
+  /**
+   * Show day details in a modal
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+  showDayDetails(date) {
+    const habits = this.getFilteredAndSortedHabits();
+    const dailyStats = statsManager.getDailyStats(date);
+    
+    let html = `<div class="day-details">`;
+    html += `<h3>День: ${new Date(date).toLocaleDateString('ru-RU')}</h3>`;
+    html += `<p>Выполнено: ${dailyStats.completed}/${dailyStats.totalHabits} (${dailyStats.percentage}%)</p>`;
+    
+    html += `<table class="day-details-table">`;
+    html += `<thead><tr><th>Привычка</th><th>Статус</th></tr></thead>`;
+    html += `<tbody>`;
+    
+    habits.forEach(habit => {
+      const entry = entryManager.getEntry(habit.id, date);
+      let status = 'Не выполнено';
+      
+      if (entry) {
+        if (habit.type === 'checkbox') {
+          if (entry.checkboxState.completed) {
+            status = 'Выполнено';
+          } else if (entry.checkboxState.failed) {
+            status = 'Не выполнено';
+          } else {
+            status = 'В процессе';
+          }
+        } else if (habit.type.startsWith('checkbox_')) {
+          const partsCount = parseInt(habit.type.split('_')[1]);
+          const filledParts = entry.checkboxState.parts ? 
+            entry.checkboxState.parts.filter(Boolean).length : 0;
+          status = `${filledParts}/${partsCount}`;
+        } else if (habit.type === 'text') {
+          status = entry.textValue || 'Не заполнено';
+        } else if (habit.type === 'emoji') {
+          status = entry.emojiValue || 'Не выбрано';
+        }
+      }
+      
+      html += `<tr>`;
+      html += `<td>${habit.name}</td>`;
+      html += `<td>${status}</td>`;
+      html += `</tr>`;
+    });
+    
+    html += `</tbody></table>`;
+    html += `</div>`;
+    
+    // Show in proper modal instead of alert
+    const modal = document.getElementById('day-details-modal');
+    const modalContent = document.getElementById('day-details-content');
+    if (modal && modalContent) {
+      modalContent.innerHTML = html;
+      modal.classList.remove('hidden');
+      
+      // Add close button event
+      const closeBtn = modal.querySelector('.close-button');
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          modal.classList.add('hidden');
+        };
+      }
+    }
+  }
+
+  /**
+   * Render ideas panel
+   */
+  renderIdeasPanel() {
+    // Get habits based on current filter status
+    let habits;
+    if (this.filters.status === 'trash') {
+      habits = habitManager.getHabitsByStatus('trash');
+    } else if (this.filters.status === 'archived') {
+      habits = habitManager.getHabitsByStatus('archived');
+    } else if (this.filters.status === 'idea') {
+      habits = habitManager.getHabitsByStatus('idea');
+    } else {
+      // For active status, show the ideas panel
+      habits = habitManager.getHabitsByStatus('idea');
+    }
+    
+    // If we're not showing active habits or we're in trash/archived/idea view, hide the ideas panel
+    if (this.filters.status !== 'active' || habits.length === 0) {
+      this.ideasPanel.style.display = 'none';
+      return;
+    }
+    
+    this.ideasPanel.style.display = 'block';
+    
+    let html = '<ul class="ideas-list">';
+    habits.forEach(idea => {
+      html += `<li>
+        ${idea.name} 
+        <button class="activate-idea" data-habit-id="${idea.id}">Активировать</button>
+      </li>`;
+    });
+    html += '</ul>';
+    
+    const ideasContent = this.ideasPanel.querySelector('.ideas-content');
+    if (ideasContent) {
+      ideasContent.innerHTML = html;
+    }
+    
+    // Bind activate buttons
+    document.querySelectorAll('.activate-idea').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const habitId = e.target.dataset.habitId;
+        habitManager.restoreHabit(habitId, 'active');
+        this.render();
+      });
+    });
+  }
+
+  /**
+   * Update statistics display
+   */
+  updateStats() {
+    const today = getCurrentDate();
+    const dailyStats = statsManager.getDailyStats(today);
+    
+    if (this.dailyStatsEl) {
+      this.dailyStatsEl.textContent = `Выполнено сегодня: ${dailyStats.completed}/${dailyStats.totalHabits} (${dailyStats.percentage}%)`;
+    }
+    
+    // Убираем дублирующую информацию об активных привычках
+  }
+
+  /**
+   * Get filtered and sorted habits
+   * @returns {Array} Filtered and sorted habits
+   */
+  getFilteredAndSortedHabits() {
+    const allHabits = habitManager.getAllHabits();
+    const filteredHabits = filterManager.applyFilters(allHabits, this.filters);
+    return filterManager.applySorting(filteredHabits, this.sortBy);
+  }
+}
+
+// Make it available globally
+window.UIManager = UIManager;
