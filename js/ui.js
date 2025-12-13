@@ -1223,6 +1223,9 @@ class UIManager {
               }
             });
           }
+          
+          // Recalculate habit strength
+          entryManager.recalculateHabitStrength(habitId);
         }
         
         this.render();
@@ -1258,6 +1261,8 @@ class UIManager {
         
         // Save new emoji
         entryManager.setEmojiValue(habitId, date, nextEmoji);
+        // Recalculate habit strength
+        entryManager.recalculateHabitStrength(habitId);
         this.render();
       });
     });
@@ -1291,15 +1296,13 @@ class UIManager {
       // Mark that event listener is attached
       input.dataset.listenerAttached = 'true';
       
-      let timeoutId;
       input.addEventListener('input', (e) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          const habitId = input.dataset.habitId;
-          const date = input.dataset.date;
-          const value = input.value;
-          entryManager.setTextValue(habitId, date, value);
-        }, 500); // 500ms debounce
+        const habitId = input.dataset.habitId;
+        const date = input.dataset.date;
+        const value = input.value;
+        entryManager.setTextValue(habitId, date, value);
+        // Recalculate habit strength immediately
+        entryManager.recalculateHabitStrength(habitId);
       });
     });
   }

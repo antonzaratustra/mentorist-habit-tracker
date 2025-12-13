@@ -123,40 +123,29 @@ class EntryManager {
       entry = this.createEntry(habitId, date);
     }
 
+    // Get the habit for strength calculations
+    const habit = habitManager.getHabitById(habitId);
+    if (!habit) return entry;
+
     // Handle multi-part checkboxes
     if (partIndex !== null) {
       // Initialize parts array if needed
+      const habitType = habit.type;
+      const partsCount = habitType.startsWith('checkbox_') ? parseInt(habitType.split('_')[1]) : 1;
+      
       if (!entry.checkboxState.parts || entry.checkboxState.parts.length === 0) {
-        // We would need to know the number of parts from the habit definition
-        // For now, initialize with 4 parts
-        entry.checkboxState.parts = [false, false, false, false];
+        entry.checkboxState.parts = Array(partsCount).fill(false);
       }
       
       // Toggle the specific part
-      const wasChecked = entry.checkboxState.parts[partIndex];
-      entry.checkboxState.parts[partIndex] = !wasChecked;
+      entry.checkboxState.parts[partIndex] = !entry.checkboxState.parts[partIndex];
       
-      // Increase habit strength when part is checked
-      if (!wasChecked) {
-        const habit = habitManager.getHabitById(habitId);
-        if (habit) {
-          habit.strength = (habit.strength || 0) + 1;
-          habitManager.saveHabits();
-        }
-      }
+      // Recalculate habit strength based on current state
+      this.recalculateHabitStrength(habitId);
     } else {
       // Handle single checkbox: empty → completed → failed → empty
-      const wasCompleted = entry.checkboxState.completed;
       if (!entry.checkboxState.completed && !entry.checkboxState.failed) {
         entry.checkboxState.completed = true;
-        // Increase habit strength when marked as completed
-        if (!wasCompleted) {
-          const habit = habitManager.getHabitById(habitId);
-          if (habit) {
-            habit.strength = (habit.strength || 0) + 1;
-            habitManager.saveHabits();
-          }
-        }
       } else if (entry.checkboxState.completed && !entry.checkboxState.failed) {
         entry.checkboxState.completed = false;
         entry.checkboxState.failed = true;
@@ -164,6 +153,9 @@ class EntryManager {
         entry.checkboxState.completed = false;
         entry.checkboxState.failed = false;
       }
+      
+      // Recalculate habit strength based on current state
+      this.recalculateHabitStrength(habitId);
     }
 
     entry.updatedAt = getCurrentDate();
@@ -186,18 +178,6 @@ class EntryManager {
       entry = this.createEntry(habitId, date);
     }
 
-    // Increase habit strength when text value is added (and wasn't empty before)
-    const hadValue = entry.textValue && entry.textValue.trim() !== '';
-    const hasValue = textValue && textValue.trim() !== '';
-    
-    if (!hadValue && hasValue) {
-      const habit = habitManager.getHabitById(habitId);
-      if (habit) {
-        habit.strength = (habit.strength || 0) + 1;
-        habitManager.saveHabits();
-      }
-    }
-
     entry.textValue = textValue;
     entry.updatedAt = getCurrentDate();
     this.saveEntries();
@@ -217,18 +197,6 @@ class EntryManager {
     // Create entry if it doesn't exist
     if (!entry) {
       entry = this.createEntry(habitId, date);
-    }
-
-    // Increase habit strength when emoji value is added (and wasn't set before)
-    const hadValue = entry.emojiValue && entry.emojiValue.trim() !== '';
-    const hasValue = emojiValue && emojiValue.trim() !== '';
-    
-    if (!hadValue && hasValue) {
-      const habit = habitManager.getHabitById(habitId);
-      if (habit) {
-        habit.strength = (habit.strength || 0) + 1;
-        habitManager.saveHabits();
-      }
     }
 
     entry.emojiValue = emojiValue;
@@ -261,6 +229,49 @@ class EntryManager {
     this.saveEntries();
     console.log('Saved entry with comment:', entry);
     return entry;
+  }
+
+  /**
+   * Recalculate habit strength based on all entries for this habit
+   * @param {string} habitId - Habit ID
+   */
+  recalculateHabitStrength(habitId) {
+    const habit = habitManager.getHabitById(habitId);
+    if (!habit) return;
+    
+    // Get all entries for this habit
+    const habitEntries = this.getEntriesByHabit(habitId);
+    
+    // Calculate strength based on current entries
+    let strength = 0;
+    
+    habitEntries.forEach(entry => {
+      if (habit.type === 'checkbox') {
+        // For simple checkboxes, strength is 1 if completed
+        if (entry.checkboxState.completed) {
+          strength += 1;
+        }
+      } else if (habit.type.startsWith('checkbox_')) {
+        // For multi-part checkboxes, strength is number of completed parts
+        if (entry.checkboxState.parts) {
+          strength += entry.checkboxState.parts.filter(part => part).length;
+        }
+      } else if (habit.type === 'text') {
+        // For text entries, strength is 1 if text is not empty
+        if (entry.textValue && entry.textValue.trim() !== '') {
+          strength += 1;
+        }
+      } else if (habit.type === 'emoji') {
+        // For emoji entries, strength is 1 if emoji is selected
+        if (entry.emojiValue && entry.emojiValue.trim() !== '') {
+          strength += 1;
+        }
+      }
+    });
+    
+    // Update habit strength
+    habit.strength = strength;
+    habitManager.saveHabits();
   }
 
   /**
