@@ -17,6 +17,7 @@
             <h1>Mentorist Habit Tracker</h1>
             <div class="header-controls">
                 <button id="theme-toggle" class="icon-button"><span>🌙</span></button>
+                <button id="accent-color-toggle" class="icon-button">🎨</button>
             </div>
         </div>
         <div class="header-stats">
@@ -225,6 +226,26 @@
         </div>
     </div>
 
+    <!-- Accent Color Picker Modal -->
+    <div id="accent-color-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Выберите акцентный цвет</h2>
+                <button class="close-button" id="accent-color-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="accent-color-picker">
+                    <div class="color-option selected" data-color="#FF8C42" style="background: linear-gradient(45deg, #FF8C42, #FFB178);"></div>
+                    <div class="color-option" data-color="#4285F4" style="background: linear-gradient(45deg, #4285F4, #76a9f9);"></div>
+                    <div class="color-option" data-color="#0F9D58" style="background: linear-gradient(45deg, #0F9D58, #42bf80);"></div>
+                    <div class="color-option" data-color="#F44336" style="background: linear-gradient(45deg, #F44336, #f87669);"></div>
+                    <div class="color-option" data-color="#9C27B0" style="background: linear-gradient(45deg, #9C27B0, #c25ddd);"></div>
+                    <div class="color-option" data-color="#FF9800" style="background: linear-gradient(45deg, #FF9800, #ffb94d);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Help Modal -->
     <div id="help-modal" class="modal hidden">
         <div class="modal-content help-modal-content">
@@ -366,6 +387,14 @@
                         <div class="feature-content">
                             <h4>Тема оформления</h4>
                             <p>Переключайтесь между светлой и темной темой с помощью кнопки <button class="inline-button theme-toggle-demo">🌙</button> в шапке.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-content">
+                            <h4>Акцентный цвет</h4>
+                            <p>Выбирайте акцентный цвет для интерфейса с помощью кнопки <button class="inline-button theme-toggle-demo">🎨</button> в шапке. Цвет применяется ко всем элементам интерфейса.</p>
                         </div>
                     </div>
                     
