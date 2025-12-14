@@ -941,6 +941,57 @@ class UIManager {
     const lastDate = new Date(weekDates[6]);
     
     this.weekRangeEl.textContent = `Неделя: ${firstDate.getDate()}-${lastDate.getDate()} ${lastDate.toLocaleDateString('ru-RU', { month: 'long' })}`;
+    
+    // Update mentor progress bar
+    this.updateMentorProgressBar(weekDates);
+  }
+
+  /**
+   * Update mentor progress bar
+   * @param {Array<string>} weekDates - Array of dates for the current week
+   */
+  updateMentorProgressBar(weekDates) {
+    try {
+      // Calculate current week completion percentage
+      const currentWeekStats = statsManager.getWeeklyStats(weekDates);
+      const currentPercentage = currentWeekStats.percentage;
+      
+      // Calculate previous week dates
+      const prevWeekStart = new Date(this.currentWeekStart);
+      prevWeekStart.setDate(prevWeekStart.getDate() - 7);
+      const prevWeekDates = getWeekDates(prevWeekStart);
+      
+      // Calculate previous week completion percentage
+      const prevWeekStats = statsManager.getWeeklyStats(prevWeekDates);
+      const prevPercentage = prevWeekStats.percentage;
+      
+      // Calculate difference
+      const difference = currentPercentage - prevPercentage;
+      
+      // Get the progress container
+      const progressContainer = document.getElementById('mentor-progress-container');
+      if (!progressContainer) return;
+      
+      // Create progress bar HTML
+      let arrowHtml = '';
+      if (difference > 0) {
+        arrowHtml = `<span class="mentor-progress-arrow up">▲</span>`;
+      } else if (difference < 0) {
+        arrowHtml = `<span class="mentor-progress-arrow down">▼</span>`;
+      }
+      
+      progressContainer.innerHTML = `
+        <div class="mentor-progress-bar">
+          <div class="mentor-progress-fill" style="width: ${currentPercentage}%"></div>
+        </div>
+        <div class="mentor-progress-text">${currentPercentage}%</div>
+        ${arrowHtml}
+        <div class="mentor-progress-text">${difference !== 0 ? Math.abs(difference) + '%' : ''}</div>
+      `;
+    } catch (error) {
+      console.warn('Error updating mentor progress bar:', error);
+      // Don't let progress bar errors break the UI
+    }
   }
 
   /**
