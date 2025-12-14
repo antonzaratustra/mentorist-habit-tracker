@@ -45,6 +45,50 @@
   border-top: 1px solid var(--border-color);
 }
 
+/* Mentor Progress Bar */
+.mentor-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 1rem;
+}
+
+.mentor-progress-bar {
+  width: 100px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.mentor-progress-fill {
+  height: 100%;
+  background-color: var(--accent-color);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.mentor-progress-text {
+  font-size: 0.9rem;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+.mentor-progress-arrow {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.mentor-progress-arrow.up {
+  color: #4CAF50; /* Green for improvement */
+}
+
+.mentor-progress-arrow.down {
+  color: #F44336; /* Red for decline */
+}
+
 .theme-dark .header-stats {
   background-color: rgba(255, 255, 255, 0.05);
 }
@@ -1359,48 +1403,4 @@ body {
     padding: 0.5rem;
     font-size: 0.9rem;
   }
-}
-
-/* Mentor Progress Bar Styles */
-.mentor-progress-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0 1rem;
-}
-
-.mentor-progress-bar {
-  width: 100px;
-  height: 10px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  overflow: hidden;
-  position: relative;
-}
-
-.mentor-progress-fill {
-  height: 100%;
-  background-color: var(--accent-color);
-  border-radius: 5px;
-  transition: width 0.3s ease;
-}
-
-.mentor-progress-text {
-  font-size: 0.9rem;
-  font-weight: bold;
-  min-width: 40px;
-  text-align: center;
-}
-
-.mentor-progress-arrow {
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.mentor-progress-arrow.up {
-  color: #4CAF50; /* Green for improvement */
-}
-
-.mentor-progress-arrow.down {
-  color: #F44336; /* Red for decline */
 }
