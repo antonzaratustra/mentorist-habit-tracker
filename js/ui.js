@@ -2358,6 +2358,8 @@ class UIManager {
         else if (this.filters.type === 'checkbox_2') label = '☑️ Чекбокс 2 части';
         else if (this.filters.type === 'checkbox_3') label = '☑️ Чекбокс 3 части';
         else if (this.filters.type === 'checkbox_4') label = '☑️ Чекбокс 4 части';
+        // Add emoji to the "All types" label
+        else if (this.filters.type === '') label = '📋 Все типы';
         this.updateDropdownLabel(this.filterTypeButton, label);
       }
     }
@@ -2379,6 +2381,8 @@ class UIManager {
         if (this.filters.strength === 'weak') label = '🔴 Слабые (0-5)';
         else if (this.filters.strength === 'medium') label = '🟡 Средние (6-15)';
         else if (this.filters.strength === 'strong') label = '🟢 Сильные (16+)';
+        // Add emoji to the "Any strength" label
+        else if (this.filters.strength === '') label = '💪 Любая сила';
         this.updateDropdownLabel(this.filterStrengthButton, label);
       }
     }
