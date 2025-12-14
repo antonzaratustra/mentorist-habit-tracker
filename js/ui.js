@@ -865,7 +865,7 @@ class UIManager {
    * Handle habit form submission
    * @param {Event} e - Submit event
    */
-  handleHabitFormSubmit(e) {
+  async handleHabitFormSubmit(e) {
     e.preventDefault();
     console.log('Form submitted');
     
@@ -936,7 +936,8 @@ class UIManager {
         // Show warning if changing habit type
         const warning = habitManager.getConversionWarning(existingHabit.type, habitData.type);
         if (warning) {
-          const confirmed = confirm(`${warning}\n\nВы уверены, что хотите продолжить?`);
+          // Use custom modal instead of browser-native confirm
+          const confirmed = await this.showConfirm(warning);
           if (!confirmed) {
             return; // User cancelled the conversion
           }
