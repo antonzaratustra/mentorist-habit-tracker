@@ -43,6 +43,8 @@ class UIManager {
     this.filterTypeMenu = document.getElementById('filter-type-menu');
     this.filterStrengthButton = document.getElementById('filter-strength-button');
     this.filterStrengthMenu = document.getElementById('filter-strength-menu');
+    this.filterLifeSphereButton = document.getElementById('filter-life-sphere-button');
+    this.filterLifeSphereMenu = document.getElementById('filter-life-sphere-menu');
     
     this.statusFilters = document.querySelectorAll('.status-filter');
     
@@ -477,6 +479,19 @@ class UIManager {
       // Populate tags display
       this.populateTagsDisplay(habit.tags);
       
+      // Populate new fields
+      if (document.getElementById('life-sphere')) {
+        document.getElementById('life-sphere').value = habit.lifeSphere || '';
+      }
+      
+      if (document.getElementById('habit-values')) {
+        document.getElementById('habit-values').value = (habit.values || []).join(', ');
+      }
+      
+      if (document.getElementById('habit-goals')) {
+        document.getElementById('habit-goals').value = (habit.goals || []).join(', ');
+      }
+      
       // Populate time of day options
       this.populateTimeOfDayOptions(habit.type, habit.timeOfDay);
       
@@ -519,6 +534,19 @@ class UIManager {
       delete habitForm.dataset.habitId;
       this.toggleEmojiOptions('checkbox');
       this.populateTimeOfDayOptions('checkbox');
+      
+      // Reset new fields
+      if (document.getElementById('life-sphere')) {
+        document.getElementById('life-sphere').value = '';
+      }
+      
+      if (document.getElementById('habit-values')) {
+        document.getElementById('habit-values').value = '';
+      }
+      
+      if (document.getElementById('habit-goals')) {
+        document.getElementById('habit-goals').value = '';
+      }
       
       // Hide archive and move to ideas buttons
       if (archiveBtn) archiveBtn.style.display = 'none';
@@ -691,11 +719,17 @@ class UIManager {
     const tagsInput = document.getElementById('habit-tags');
     const emojiInput = document.getElementById('emoji-options');
     const statusInput = document.getElementById('habit-status');
+    const lifeSphereSelect = document.getElementById('life-sphere');
+    const valuesInput = document.getElementById('habit-values');
+    const goalsInput = document.getElementById('habit-goals');
     
     const habitData = {
       name: nameInput ? nameInput.value.trim() : '',
       type: typeSelect ? typeSelect.value : 'checkbox',
       tags: tagsInput && tagsInput.value ? tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+      lifeSphere: lifeSphereSelect ? lifeSphereSelect.value : '',
+      values: valuesInput && valuesInput.value ? valuesInput.value.split(',').map(value => value.trim()).filter(value => value) : [],
+      goals: goalsInput && goalsInput.value ? goalsInput.value.split(',').map(goal => goal.trim()).filter(goal => goal) : [],
       status: statusInput ? statusInput.value : 'active' // Use default status
     };
     
@@ -2049,6 +2083,38 @@ class UIManager {
           this.updateDropdownLabel(this.filterStrengthButton, label);
           this.filterStrengthMenu.classList.add('hidden');
           this.filterStrengthButton.classList.remove('active');
+          this.render();
+        }
+      });
+    }
+    
+    // Life Sphere dropdown
+    if (this.filterLifeSphereButton && this.filterLifeSphereMenu) {
+      this.filterLifeSphereButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterLifeSphereMenu, this.filterLifeSphereButton);
+      });
+      
+      // Handle item selection
+      this.filterLifeSphereMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.lifeSphere = value;
+          
+          // Update button label with emoji
+          let label = 'Все сферы';
+          if (value === 'purpose') label = '🎯 Призвание';
+          else if (value === 'spirituality') label = '🌀 Духовность';
+          else if (value === 'relationships') label = '🤝 Отношения';
+          else if (value === 'environment') label = '🏠 Окружение';
+          else if (value === 'self-development') label = '📚 Саморазвитие';
+          else if (value === 'finances') label = '💰 Финансы';
+          else if (value === 'brightness') label = '🎉 Яркость жизни';
+          else if (value === 'health') label = '❤️ Здоровье';
+          
+          this.updateDropdownLabel(this.filterLifeSphereButton, label);
+          this.filterLifeSphereMenu.classList.add('hidden');
+          this.filterLifeSphereButton.classList.remove('active');
           this.render();
         }
       });

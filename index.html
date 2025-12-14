@@ -137,6 +137,43 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Custom Life Sphere Dropdown -->
+                <div class="custom-dropdown">
+                    <button id="filter-life-sphere-button" class="dropdown-button">
+                        <span class="dropdown-label">Все сферы</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div id="filter-life-sphere-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-item" data-value="">
+                            <span>Все сферы</span>
+                        </div>
+                        <div class="dropdown-item" data-value="purpose">
+                            <span>🎯 Призвание</span>
+                        </div>
+                        <div class="dropdown-item" data-value="spirituality">
+                            <span>🌀 Духовность</span>
+                        </div>
+                        <div class="dropdown-item" data-value="relationships">
+                            <span>🤝 Отношения</span>
+                        </div>
+                        <div class="dropdown-item" data-value="environment">
+                            <span>🏠 Окружение</span>
+                        </div>
+                        <div class="dropdown-item" data-value="self-development">
+                            <span>📚 Саморазвитие</span>
+                        </div>
+                        <div class="dropdown-item" data-value="finances">
+                            <span>💰 Финансы</span>
+                        </div>
+                        <div class="dropdown-item" data-value="brightness">
+                            <span>🎉 Яркость жизни</span>
+                        </div>
+                        <div class="dropdown-item" data-value="health">
+                            <span>❤️ Здоровье</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -219,6 +256,31 @@
                       </label>
                     </div>
                   </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="life-sphere">Сфера жизни:</label>
+                    <select id="life-sphere" name="life-sphere">
+                        <option value="">Выберите сферу жизни</option>
+                        <option value="purpose">🎯 Призвание</option>
+                        <option value="spirituality">🌀 Духовность</option>
+                        <option value="relationships">🤝 Отношения</option>
+                        <option value="environment">🏠 Окружение</option>
+                        <option value="self-development">📚 Саморазвитие</option>
+                        <option value="finances">💰 Финансы</option>
+                        <option value="brightness">🎉 Яркость жизни</option>
+                        <option value="health">❤️ Здоровье</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="habit-values">Ценности (через запятую):</label>
+                    <input type="text" id="habit-values" name="habit-values" placeholder="Здоровье, Развитие, Семья">
+                </div>
+                
+                <div class="form-group">
+                    <label for="habit-goals">Цели (через запятую):</label>
+                    <input type="text" id="habit-goals" name="habit-goals" placeholder="Бегать 3 раза в неделю, Читать 20 минут ежедневно">
                 </div>
                 
                 <div class="form-group">

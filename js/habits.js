@@ -34,6 +34,9 @@ class HabitManager {
       type: habitData.type,
       emojiOptions: habitData.emojiOptions || [],
       tags: habitData.tags || [],
+      lifeSphere: habitData.lifeSphere || '',
+      values: habitData.values || [],
+      goals: habitData.goals || [],
       timeOfDay: habitData.timeOfDay || { single: "day" },
       status: habitData.status || "active", // Use provided status or default to active
       strength: 0,

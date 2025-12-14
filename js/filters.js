@@ -3,6 +3,16 @@
 class FilterManager {
   constructor() {
     // Filter manager doesn't need to store state locally
+    this.lifeSpheres = {
+      'purpose': '🎯 Призвание',
+      'spirituality': '🌀 Духовность',
+      'relationships': '🤝 Отношения',
+      'environment': '🏠 Окружение',
+      'self-development': '📚 Саморазвитие',
+      'finances': '💰 Финансы',
+      'brightness': '🎉 Яркость жизни',
+      'health': '❤️ Здоровье'
+    };
   }
 
   /**
@@ -25,6 +35,17 @@ class FilterManager {
   filterByTag(habits, tag) {
     if (!tag) return habits;
     return habits.filter(habit => habit.tags.includes(tag));
+  }
+
+  /**
+   * Filter habits by life sphere
+   * @param {Array} habits - Array of habits
+   * @param {string} lifeSphere - Life sphere to filter by
+   * @returns {Array} Filtered habits
+   */
+  filterByLifeSphere(habits, lifeSphere) {
+    if (!lifeSphere) return habits;
+    return habits.filter(habit => habit.lifeSphere === lifeSphere);
   }
 
   /**
@@ -97,6 +118,10 @@ class FilterManager {
     
     if (filters.tag) {
       filtered = this.filterByTag(filtered, filters.tag);
+    }
+    
+    if (filters.lifeSphere) {
+      filtered = this.filterByLifeSphere(filtered, filters.lifeSphere);
     }
     
     if (filters.timeOfDay) {
@@ -191,6 +216,47 @@ class FilterManager {
       }
     });
     return Array.from(times).sort();
+  }
+
+  /**
+   * Get all unique life spheres from habits
+   * @param {Array} habits - Array of habits
+   * @returns {Array} Unique life spheres
+   */
+  getAllLifeSpheres(habits) {
+    const spheres = new Set();
+    habits.forEach(habit => {
+      if (habit.lifeSphere) {
+        spheres.add(habit.lifeSphere);
+      }
+    });
+    return Array.from(spheres).sort();
+  }
+
+  /**
+   * Get all unique values from habits
+   * @param {Array} habits - Array of habits
+   * @returns {Array} Unique values
+   */
+  getAllValues(habits) {
+    const values = new Set();
+    habits.forEach(habit => {
+      habit.values.forEach(value => values.add(value));
+    });
+    return Array.from(values).sort();
+  }
+
+  /**
+   * Get all unique goals from habits
+   * @param {Array} habits - Array of habits
+   * @returns {Array} Unique goals
+   */
+  getAllGoals(habits) {
+    const goals = new Set();
+    habits.forEach(habit => {
+      habit.goals.forEach(goal => goals.add(goal));
+    });
+    return Array.from(goals).sort();
   }
 }
 
