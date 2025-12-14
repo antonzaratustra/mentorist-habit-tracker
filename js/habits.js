@@ -88,35 +88,131 @@ class HabitManager {
    */
   convertHabitType(habit, newType) {
     const oldType = habit.type;
+    const oldTimeOfDay = {...habit.timeOfDay};
+    
+    // Store the old strength to preserve it during conversion
+    const oldStrength = habit.strength || 0;
+    
+    // Handle conversions that might lose data with proper warnings
+    const conversionWarning = this.getConversionWarning(oldType, newType);
+    if (conversionWarning) {
+      console.warn(conversionWarning);
+      // In a real implementation, this would trigger a UI warning dialog
+    }
+
+    // Preserve existing entries before conversion
+    const habitEntries = entryManager.getEntriesByHabit(habit.id);
+    
+    // Perform the type conversion
     habit.type = newType;
 
-    // Handle conversions that might lose data
-    if ((oldType.includes('checkbox') && (newType === 'text' || newType === 'emoji')) ||
-        ((oldType === 'text' || oldType === 'emoji') && newType.includes('checkbox'))) {
-      // Show warning to user about data loss (would be handled in UI)
-      console.warn(`Converting from ${oldType} to ${newType} may result in data loss`);
-    }
-
-    // Handle checkbox to multi-part conversion
+    // Handle time of day conversion
     if (oldType === 'checkbox' && newType.startsWith('checkbox_')) {
+      // Single checkbox to multi-part
       const partsCount = parseInt(newType.split('_')[1]);
-      if (!habit.timeOfDay.parts) {
-        habit.timeOfDay = {
-          parts: Array(partsCount).fill().map((_, i) => ({
-            partIndex: i,
-            time: habit.timeOfDay.single || 'day'
-          }))
-        };
-      }
-    }
-
-    // Handle multi-part to checkbox conversion
-    if (oldType.startsWith('checkbox_') && newType === 'checkbox') {
-      // Convert multi-part to single checkbox
       habit.timeOfDay = {
-        single: habit.timeOfDay.parts ? habit.timeOfDay.parts[0].time : 'day'
+        parts: Array(partsCount).fill().map((_, i) => ({
+          partIndex: i,
+          time: oldTimeOfDay.single || 'day'
+        }))
+      };
+    } else if (oldType.startsWith('checkbox_') && newType === 'checkbox') {
+      // Multi-part to single checkbox
+      habit.timeOfDay = {
+        single: oldTimeOfDay.parts && oldTimeOfDay.parts.length > 0 ? 
+          oldTimeOfDay.parts[0].time : 'day'
+      };
+    } else if ((oldType === 'text' || oldType === 'emoji') && newType === 'checkbox') {
+      // Text/emoji to checkbox - preserve time of day
+      habit.timeOfDay = {
+        single: oldTimeOfDay.single || 'day'
+      };
+    } else if (oldType === 'checkbox' && (newType === 'text' || newType === 'emoji')) {
+      // Checkbox to text/emoji - preserve time of day
+      habit.timeOfDay = {
+        single: oldTimeOfDay.single || 'day'
+      };
+    } else if (oldType.startsWith('checkbox_') && (newType === 'text' || newType === 'emoji')) {
+      // Multi-part to text/emoji - preserve time of day from first part
+      habit.timeOfDay = {
+        single: oldTimeOfDay.parts && oldTimeOfDay.parts.length > 0 ? 
+          oldTimeOfDay.parts[0].time : 'day'
+      };
+    } else if ((oldType === 'text' || oldType === 'emoji') && newType.startsWith('checkbox_')) {
+      // Text/emoji to multi-part
+      const partsCount = parseInt(newType.split('_')[1]);
+      habit.timeOfDay = {
+        parts: Array(partsCount).fill().map((_, i) => ({
+          partIndex: i,
+          time: oldTimeOfDay.single || 'day'
+        }))
       };
     }
+
+    // Convert entries to match new habit type
+    entryManager.convertEntriesForHabitTypeChange(habit.id, oldType, newType);
+    
+    // Preserve habit strength after conversion
+    habit.strength = oldStrength;
+    
+    // Log the conversion for debugging
+    console.log(`Converted habit ${habit.id} from ${oldType} to ${newType}`, {
+      oldTimeOfDay,
+      newTimeOfDay: habit.timeOfDay,
+      preservedStrength: oldStrength
+    });
+  }
+
+  /**
+   * Get conversion warning message for potentially destructive conversions
+   * @param {string} oldType - Old habit type
+   * @param {string} newType - New habit type
+   * @returns {string|null} Warning message or null if no warning needed
+   */
+  getConversionWarning(oldType, newType) {
+    // No warning needed if types are the same
+    if (oldType === newType) {
+      return null;
+    }
+    
+    // Conversions that might lose detailed data
+    if (oldType.startsWith('checkbox_') && newType === 'checkbox') {
+      const partsCount = oldType.split('_')[1];
+      return `При конвертации из многочастевого чекбокса (${partsCount} части) в простой чекбокс детали выполнения частей будут потеряны. Только если все части были выполнены, привычка будет считаться выполненной.`;
+    }
+    
+    if (oldType === 'checkbox' && newType.startsWith('checkbox_')) {
+      const partsCount = newType.split('_')[1];
+      return `При конвертации из простого чекбокса в многочастевой (${partsCount} части) существующие данные о выполнении будут преобразованы. Если привычка была выполнена, первая часть будет отмечена как выполненная.`;
+    }
+    
+    if ((oldType === 'text' || oldType === 'emoji') && newType.includes('checkbox')) {
+      return `При конвертации из ${this.getTypeDisplayName(oldType)} в ${this.getTypeDisplayName(newType)} существующие записи будут преобразованы в состояние чекбокса. Если поле было заполнено, привычка будет считаться выполненной.`;
+    }
+    
+    if (oldType.includes('checkbox') && (newType === 'text' || newType === 'emoji')) {
+      return `При конвертации из ${this.getTypeDisplayName(oldType)} в ${this.getTypeDisplayName(newType)} существующие записи будут преобразованы в значения ${newType}. Выполненные привычки получат значение "Выполнено" или "✅".`;
+    }
+    
+    return `При конвертации типа привычки из ${this.getTypeDisplayName(oldType)} в ${this.getTypeDisplayName(newType)} данные будут преобразованы. Некоторая информация может быть потеряна.`;
+  }
+
+  /**
+   * Get display name for habit type
+   * @param {string} type - Habit type
+   * @returns {string} Display name
+   */
+  getTypeDisplayName(type) {
+    const typeNames = {
+      'checkbox': 'простой чекбокс',
+      'checkbox_2': 'двухчастевой чекбокс',
+      'checkbox_3': 'трехчастевой чекбокс',
+      'checkbox_4': 'четырехчастевой чекбокс',
+      'text': 'текстовое поле',
+      'emoji': 'поле выбора эмодзи'
+    };
+    
+    return typeNames[type] || type;
   }
 
   /**

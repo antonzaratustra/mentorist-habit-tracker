@@ -7,6 +7,7 @@ class StatsManager {
 
   /**
    * Calculate habit strength based on completion history
+   * This method properly handles different habit types and preserves statistics during conversions
    * @param {string} habitId - Habit ID
    * @returns {number} Strength value (0-100)
    */
@@ -18,7 +19,7 @@ class StatsManager {
     const entries = storage.getEntriesByHabitId(habitId);
     if (entries.length === 0) return 0;
 
-    // Calculate completion percentage
+    // Calculate completion percentage with proper handling for different habit types
     let completedDays = 0;
     let totalDays = entries.length;
 

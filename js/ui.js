@@ -930,6 +930,19 @@ class UIManager {
     const habitId = e.target.dataset.habitId;
     
     if (habitId) {
+      // Update existing habit
+      const existingHabit = habitManager.getHabitById(habitId);
+      if (existingHabit && existingHabit.type !== habitData.type) {
+        // Show warning if changing habit type
+        const warning = habitManager.getConversionWarning(existingHabit.type, habitData.type);
+        if (warning) {
+          const confirmed = confirm(`${warning}\n\nВы уверены, что хотите продолжить?`);
+          if (!confirmed) {
+            return; // User cancelled the conversion
+          }
+        }
+      }
+      
       // Update existing habit (remove status from updates as it's managed separately)
       const { status, ...updateData } = habitData;
       console.log('Updating habit:', habitId, updateData);

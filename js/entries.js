@@ -75,10 +75,6 @@ class EntryManager {
 
     Object.assign(entry, updates, { updatedAt: getCurrentDate() });
     this.saveEntries();
-    
-    // Recalculate habit strength after updating entry
-    this.recalculateHabitStrength(habitId);
-    
     return entry;
   }
 
@@ -185,10 +181,6 @@ class EntryManager {
     entry.textValue = textValue;
     entry.updatedAt = getCurrentDate();
     this.saveEntries();
-    
-    // Recalculate habit strength after updating entry
-    this.recalculateHabitStrength(habitId);
-    
     return entry;
   }
 
@@ -210,10 +202,6 @@ class EntryManager {
     entry.emojiValue = emojiValue;
     entry.updatedAt = getCurrentDate();
     this.saveEntries();
-    
-    // Recalculate habit strength after updating entry
-    this.recalculateHabitStrength(habitId);
-    
     return entry;
   }
 
@@ -240,10 +228,6 @@ class EntryManager {
     entry.updatedAt = getCurrentDate();
     this.saveEntries();
     console.log('Saved entry with comment:', entry);
-    
-    // Recalculate habit strength after updating entry
-    this.recalculateHabitStrength(habitId);
-    
     return entry;
   }
 
@@ -258,58 +242,35 @@ class EntryManager {
     // Get all entries for this habit
     const habitEntries = this.getEntriesByHabit(habitId);
     
-    // Sort entries by date to process chronologically
-    habitEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-    
     // Calculate strength based on current entries
     let strength = 0;
     
     habitEntries.forEach(entry => {
       if (habit.type === 'checkbox') {
-        // For simple checkboxes:
-        // +1 for completed, -1 for failed (but never below 0)
+        // For simple checkboxes, strength is 1 if completed
         if (entry.checkboxState.completed) {
-          strength = Math.max(0, strength + 1);
-        } else if (entry.checkboxState.failed) {
-          strength = Math.max(0, strength - 1);
+          strength += 1;
         }
       } else if (habit.type.startsWith('checkbox_')) {
-        // For multi-part checkboxes, calculate proportional strength changes
-        const partsCount = parseInt(habit.type.split('_')[1]);
-        const incrementPerPart = 1 / partsCount; // e.g., 0.25 for 4 parts
-        
+        // For multi-part checkboxes, strength is number of completed parts
         if (entry.checkboxState.parts) {
-          // Count completed parts
-          const completedParts = entry.checkboxState.parts.filter(part => part).length;
-          // Add proportional strength for completed parts
-          strength = Math.max(0, strength + (completedParts * incrementPerPart));
-        }
-        
-        // If the entry is marked as failed (missed day), decrease strength
-        if (entry.checkboxState.failed) {
-          strength = Math.max(0, strength - 1);
+          strength += entry.checkboxState.parts.filter(part => part).length;
         }
       } else if (habit.type === 'text') {
-        // For text entries:
-        // +1 if text is not empty, -1 if explicitly marked as failed (but never below 0)
+        // For text entries, strength is 1 if text is not empty
         if (entry.textValue && entry.textValue.trim() !== '') {
-          strength = Math.max(0, strength + 1);
-        } else if (entry.checkboxState.failed) {
-          strength = Math.max(0, strength - 1);
+          strength += 1;
         }
       } else if (habit.type === 'emoji') {
-        // For emoji entries:
-        // +1 if emoji is selected, -1 if explicitly marked as failed (but never below 0)
+        // For emoji entries, strength is 1 if emoji is selected
         if (entry.emojiValue && entry.emojiValue.trim() !== '') {
-          strength = Math.max(0, strength + 1);
-        } else if (entry.checkboxState.failed) {
-          strength = Math.max(0, strength - 1);
+          strength += 1;
         }
       }
     });
     
-    // Update habit strength (rounded to 2 decimal places for precision)
-    habit.strength = Math.round(strength * 100) / 100;
+    // Update habit strength
+    habit.strength = strength;
     habitManager.saveHabits();
   }
 
@@ -330,6 +291,153 @@ class EntryManager {
   getAllEntries() {
     return [...this.entries];
   }
+
+  /**
+   * Convert entry data when habit type changes
+   * This ensures data is properly migrated when converting between habit types
+   * @param {string} habitId - Habit ID
+   * @param {string} oldType - Old habit type
+   * @param {string} newType - New habit type
+   */
+  convertEntriesForHabitTypeChange(habitId, oldType, newType) {
+    // No conversion needed if types are the same
+    if (oldType === newType) {
+      return;
+    }
+    
+    // Get all entries for this habit
+    const entries = this.getEntriesByHabit(habitId);
+    
+    // Convert each entry based on type change
+    entries.forEach(entry => {
+      // Initialize checkboxState if it doesn't exist
+      if (!entry.checkboxState) {
+        entry.checkboxState = { completed: false, failed: false, parts: [] };
+      }
+      
+      // Convert from checkbox to multi-part
+      if (oldType === 'checkbox' && newType.startsWith('checkbox_')) {
+        const partsCount = parseInt(newType.split('_')[1]);
+        // Convert single checkbox state to multi-part
+        const oldCompleted = entry.checkboxState.completed || false;
+        entry.checkboxState.parts = Array(partsCount).fill(false);
+        // If the single checkbox was completed, mark first part as completed
+        if (oldCompleted) {
+          entry.checkboxState.parts[0] = true;
+        }
+        // Preserve failed state
+        // Clear single checkbox state
+        delete entry.checkboxState.completed;
+      }
+      // Convert from multi-part to checkbox
+      else if (oldType.startsWith('checkbox_') && newType === 'checkbox') {
+        // If all parts were completed, mark as completed
+        const allPartsCompleted = entry.checkboxState.parts && entry.checkboxState.parts.every(part => part);
+        entry.checkboxState.completed = allPartsCompleted || false;
+        // Preserve failed state
+        // Clear parts array
+        delete entry.checkboxState.parts;
+      }
+      // Convert from text/emoji to checkbox
+      else if ((oldType === 'text' || oldType === 'emoji') && newType === 'checkbox') {
+        // If there was content, mark as completed
+        const hasContent = (oldType === 'text' && entry.textValue && entry.textValue.trim() !== '') ||
+                          (oldType === 'emoji' && entry.emojiValue && entry.emojiValue.trim() !== '');
+        entry.checkboxState.completed = hasContent || false;
+        // Clear text/emoji values
+        if (oldType === 'text') {
+          entry.textValue = '';
+        } else if (oldType === 'emoji') {
+          entry.emojiValue = '';
+        }
+      }
+      // Convert from checkbox to text
+      else if (oldType === 'checkbox' && newType === 'text') {
+        // If checkbox was completed, add some default content
+        if (entry.checkboxState.completed) {
+          entry.textValue = 'Выполнено';
+        } else {
+          entry.textValue = '';
+        }
+        // Clear checkbox state
+        entry.checkboxState = { completed: false, failed: entry.checkboxState.failed || false, parts: [] };
+      }
+      // Convert from checkbox to emoji
+      else if (oldType === 'checkbox' && newType === 'emoji') {
+        // If checkbox was completed, add default emoji
+        if (entry.checkboxState.completed) {
+          entry.emojiValue = '✅';
+        } else {
+          entry.emojiValue = '';
+        }
+        // Clear checkbox state
+        entry.checkboxState = { completed: false, failed: entry.checkboxState.failed || false, parts: [] };
+      }
+      // Convert from text to emoji
+      else if (oldType === 'text' && newType === 'emoji') {
+        // If text had content, add default emoji
+        if (entry.textValue && entry.textValue.trim() !== '') {
+          entry.emojiValue = '😊';
+        } else {
+          entry.emojiValue = '';
+        }
+        // Clear text value
+        entry.textValue = '';
+      }
+      // Convert from emoji to text
+      else if (oldType === 'emoji' && newType === 'text') {
+        // If emoji had value, add default text
+        if (entry.emojiValue && entry.emojiValue.trim() !== '') {
+          entry.textValue = 'Запись сделана';
+        } else {
+          entry.textValue = '';
+        }
+        // Clear emoji value
+        entry.emojiValue = '';
+      }
+      // Convert from multi-part to text
+      else if (oldType.startsWith('checkbox_') && newType === 'text') {
+        // Count completed parts
+        const completedParts = entry.checkboxState.parts ? 
+          entry.checkboxState.parts.filter(part => part).length : 0;
+        // Create descriptive text
+        if (completedParts > 0) {
+          const totalParts = entry.checkboxState.parts ? entry.checkboxState.parts.length : 0;
+          entry.textValue = `Выполнено ${completedParts} из ${totalParts} частей`;
+        } else {
+          entry.textValue = '';
+        }
+        // Clear checkbox state
+        entry.checkboxState = { completed: false, failed: entry.checkboxState.failed || false, parts: [] };
+      }
+      // Convert from multi-part to emoji
+      else if (oldType.startsWith('checkbox_') && newType === 'emoji') {
+        // Count completed parts
+        const completedParts = entry.checkboxState.parts ? 
+          entry.checkboxState.parts.filter(part => part).length : 0;
+        // Select emoji based on completion
+        if (completedParts > 0) {
+          const totalParts = entry.checkboxState.parts ? entry.checkboxState.parts.length : 0;
+          if (completedParts === totalParts) {
+            entry.emojiValue = '✅'; // All parts completed
+          } else {
+            entry.emojiValue = '🔄'; // Partially completed
+          }
+        } else {
+          entry.emojiValue = '';
+        }
+        // Clear checkbox state
+        entry.checkboxState = { completed: false, failed: entry.checkboxState.failed || false, parts: [] };
+      }
+      
+      // Save the converted entry
+      this.saveEntries();
+    });
+    
+    // Recalculate habit strength after conversion
+    this.recalculateHabitStrength(habitId);
+  }
+
 }
 
 // Create a singleton instance

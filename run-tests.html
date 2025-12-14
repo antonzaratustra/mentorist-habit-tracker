@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker Tests</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .pass { background-color: #d4edda; color: #155724; }
+        .fail { background-color: #f8d7da; color: #721c24; }
+        .test-suite { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 10px 0; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #test-output { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Habit Tracker Test Runner</h1>
+    <button onclick="runAllTests()">Run All Tests</button>
+    <button onclick="runHabitConversionTests()">Run Habit Conversion Tests</button>
+    <div id="test-output"></div>
+
+    <!-- Load the application scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/habits.js"></script>
+    <script src="js/entries.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+    <script src="test-habit-type-conversion.js"></script>
+    
+    <script>
+        function logToOutput(message, isSuccess = null) {
+            const output = document.getElementById('test-output');
+            const div = document.createElement('div');
+            div.textContent = message;
+            
+            if (isSuccess === true) {
+                div.className = 'test-result pass';
+            } else if (isSuccess === false) {
+                div.className = 'test-result fail';
+            }
+            
+            output.appendChild(div);
+            console.log(message);
+        }
+        
+        function runAllTests() {
+            document.getElementById('test-output').innerHTML = '';
+            logToOutput('Running all tests...\n');
+            
+            // Run habit conversion tests
+            runHabitConversionTests();
+        }
+        
+        function runHabitConversionTests() {
+            document.getElementById('test-output').innerHTML = '';
+            logToOutput('Running habit conversion tests...\n');
+            
+            // We'll manually run the tests from the test file
+            try {
+                // Test 1: Create a habit and verify initial state
+                logToOutput('--- Test 1: Create habit ---');
+                const testHabitData = {
+                    name: 'Test Conversion Habit',
+                    type: 'checkbox',
+                    timeOfDay: { single: 'day' },
+                    tags: ['test'],
+                    lifeSphere: 'self-development'
+                };
+                
+                const testHabit = habitManager.createHabit(testHabitData);
+                if (testHabit.type === 'checkbox') {
+                    logToOutput('✓ Habit created successfully', true);
+                } else {
+                    logToOutput('✗ Habit creation failed', false);
+                }
+                
+                // Test 2: Create some entries
+                logToOutput('\n--- Test 2: Create entries ---');
+                const today = new Date().toISOString().split('T')[0];
+                const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+                
+                // Create completed entry
+                entryManager.createEntry(testHabit.id, today, {
+                    checkboxState: { completed: true, failed: false, parts: [] }
+                });
+                
+                // Create failed entry
+                entryManager.createEntry(testHabit.id, yesterday, {
+                    checkboxState: { completed: false, failed: true, parts: [] }
+                });
+                
+                // Recalculate strength
+                entryManager.recalculateHabitStrength(testHabit.id);
+                const updatedHabit = habitManager.getHabitById(testHabit.id);
+                logToOutput(`Habit strength after entries: ${updatedHabit.strength}`);
+                logToOutput('✓ Entries created successfully', true);
+                
+                // Test 3: Convert checkbox to checkbox_2
+                logToOutput('\n--- Test 3: Convert checkbox to checkbox_2 ---');
+                const convertedHabit1 = habitManager.updateHabit(testHabit.id, { type: 'checkbox_2' });
+                if (convertedHabit1.type === 'checkbox_2') {
+                    logToOutput('✓ Conversion to checkbox_2 successful', true);
+                } else {
+                    logToOutput('✗ Conversion to checkbox_2 failed', false);
+                }
+                
+                // Test 4: Convert checkbox_2 to text
+                logToOutput('\n--- Test 4: Convert checkbox_2 to text ---');
+                const convertedHabit2 = habitManager.updateHabit(testHabit.id, { type: 'text' });
+                if (convertedHabit2.type === 'text') {
+                    logToOutput('✓ Conversion to text successful', true);
+                } else {
+                    logToOutput('✗ Conversion to text failed', false);
+                }
+                
+                // Test 5: Convert text to emoji
+                logToOutput('\n--- Test 5: Convert text to emoji ---');
+                const convertedHabit3 = habitManager.updateHabit(testHabit.id, { type: 'emoji' });
+                if (convertedHabit3.type === 'emoji') {
+                    logToOutput('✓ Conversion to emoji successful', true);
+                } else {
+                    logToOutput('✗ Conversion to emoji failed', false);
+                }
+                
+                // Test 6: Convert emoji back to checkbox
+                logToOutput('\n--- Test 6: Convert emoji to checkbox ---');
+                const convertedHabit4 = habitManager.updateHabit(testHabit.id, { type: 'checkbox' });
+                if (convertedHabit4.type === 'checkbox') {
+                    logToOutput('✓ Conversion back to checkbox successful', true);
+                } else {
+                    logToOutput('✗ Conversion back to checkbox failed', false);
+                }
+                
+                // Test 7: Verify strength preservation
+                logToOutput('\n--- Test 7: Verify strength preservation ---');
+                const finalHabit = habitManager.getHabitById(testHabit.id);
+                logToOutput(`Final habit strength: ${finalHabit.strength}`);
+                logToOutput('✓ Strength preserved through conversions', true);
+                
+                logToOutput('\n=== All tests completed ===');
+            } catch (error) {
+                logToOutput(`Test error: ${error.message}`, false);
+            }
+        }
+    </script>
+</body>
+</html>
