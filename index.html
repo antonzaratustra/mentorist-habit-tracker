@@ -49,30 +49,102 @@
         <div class="nav-group">
             <h3>Фильтры</h3>
             <div class="filters">
-                <select id="filter-tags">
-                    <option value="">Все теги</option>
-                </select>
-                <select id="filter-time">
-                    <option value="">Все времена</option>
-                    <option value="morning">Утро</option>
-                    <option value="day">День</option>
-                    <option value="evening">Вечер</option>
-                </select>
-                <select id="filter-type">
-                    <option value="">Все типы</option>
-                    <option value="checkbox">Чекбокс</option>
-                    <option value="text">Текст</option>
-                    <option value="emoji">Эмодзи</option>
-                    <option value="checkbox_2">Чекбокс 2 части</option>
-                    <option value="checkbox_3">Чекбокс 3 части</option>
-                    <option value="checkbox_4">Чекбокс 4 части</option>
-                </select>
-                <select id="filter-strength">
-                    <option value="">Любая сила</option>
-                    <option value="weak">Слабые (0-5)</option>
-                    <option value="medium">Средние (6-15)</option>
-                    <option value="strong">Сильные (16+)</option>
-                </select>
+                <!-- Tags dropdown -->
+                <div class="custom-dropdown">
+                  <button id="filter-tags-button" class="dropdown-button">
+                    <span class="dropdown-label">Все теги</span>
+                    <span class="dropdown-arrow">▼</span>
+                  </button>
+                  <div id="filter-tags-menu" class="dropdown-menu hidden">
+                    <div class="dropdown-item" data-value="">Все теги</div>
+                  </div>
+                </div>
+                
+                <!-- Time dropdown -->
+                <div class="custom-dropdown">
+                  <button id="filter-time-button" class="dropdown-button">
+                    <span class="dropdown-label">Все времена</span>
+                    <span class="dropdown-arrow">▼</span>
+                  </button>
+                  <div id="filter-time-menu" class="dropdown-menu hidden">
+                    <div class="dropdown-item" data-value="">Все времена</div>
+                    <div class="dropdown-item" data-value="morning">🌅 Утро</div>
+                    <div class="dropdown-item" data-value="day">☀️ День</div>
+                    <div class="dropdown-item" data-value="evening">🌙 Вечер</div>
+                  </div>
+                </div>
+                
+                <!-- Type dropdown -->
+                <div class="custom-dropdown">
+                  <button id="filter-type-button" class="dropdown-button">
+                    <span class="dropdown-label">Все типы</span>
+                    <span class="dropdown-arrow">▼</span>
+                  </button>
+                  <div id="filter-type-menu" class="dropdown-menu hidden">
+                    <div class="dropdown-item" data-value="">Все типы</div>
+                    <div class="dropdown-item" data-value="checkbox">Чекбокс</div>
+                    <div class="dropdown-item" data-value="text">Текст</div>
+                    <div class="dropdown-item" data-value="emoji">Эмодзи</div>
+                    <div class="dropdown-item" data-value="checkbox_2">Чекбокс 2 части</div>
+                    <div class="dropdown-item" data-value="checkbox_3">Чекбокс 3 части</div>
+                    <div class="dropdown-item" data-value="checkbox_4">Чекбокс 4 части</div>
+                  </div>
+                </div>
+                
+                <!-- Strength dropdown -->
+                <div class="custom-dropdown">
+                  <button id="filter-strength-button" class="dropdown-button">
+                    <span class="dropdown-label">Любая сила</span>
+                    <span class="dropdown-arrow">▼</span>
+                  </button>
+                  <div id="filter-strength-menu" class="dropdown-menu hidden">
+                    <div class="dropdown-item" data-value="">Любая сила</div>
+                    <div class="dropdown-item" data-value="weak">Слабые (0-5)</div>
+                    <div class="dropdown-item" data-value="medium">Средние (6-15)</div>
+                    <div class="dropdown-item" data-value="strong">Сильные (16+)</div>
+                  </div>
+                </div>
+                
+                <!-- Life Sphere dropdown -->
+                <div class="custom-dropdown">
+                  <button id="filter-life-sphere-button" class="dropdown-button">
+                    <span class="dropdown-label">Все сферы</span>
+                    <span class="dropdown-arrow">▼</span>
+                  </button>
+                  <div id="filter-life-sphere-menu" class="dropdown-menu hidden">
+                    <div class="dropdown-item" data-value="">Все сферы</div>
+                    <div class="dropdown-item" data-value="purpose">🎯 Призвание</div>
+                    <div class="dropdown-item" data-value="spirituality">🌀 Духовность</div>
+                    <div class="dropdown-item" data-value="relationships">🤝 Отношения</div>
+                    <div class="dropdown-item" data-value="environment">🏠 Окружение</div>
+                    <div class="dropdown-item" data-value="self-development">📚 Саморазвитие</div>
+                    <div class="dropdown-item" data-value="finances">💰 Финансы</div>
+                    <div class="dropdown-item" data-value="brightness">🎉 Яркость жизни</div>
+                    <div class="dropdown-item" data-value="health">❤️ Здоровье</div>
+                  </div>
+                </div>
+                
+                <!-- Values dropdown -->
+                <div class="custom-dropdown">
+                  <button id="filter-values-button" class="dropdown-button">
+                    <span class="dropdown-label">Все ценности</span>
+                    <span class="dropdown-arrow">▼</span>
+                  </button>
+                  <div id="filter-values-menu" class="dropdown-menu hidden">
+                    <div class="dropdown-item" data-value="">Все ценности</div>
+                  </div>
+                </div>
+                
+                <!-- Goals dropdown -->
+                <div class="custom-dropdown">
+                  <button id="filter-goals-button" class="dropdown-button">
+                    <span class="dropdown-label">Все цели</span>
+                    <span class="dropdown-arrow">▼</span>
+                  </button>
+                  <div id="filter-goals-menu" class="dropdown-menu hidden">
+                    <div class="dropdown-item" data-value="">Все цели</div>
+                  </div>
+                </div>
             </div>
         </div>
         
@@ -166,6 +238,7 @@
                     <input type="hidden" id="habit-tags" name="habit-tags">
                 </div>
                 
+                <!-- Life Sphere Field -->
                 <div class="form-group">
                     <label for="life-sphere">Сфера жизни:</label>
                     <select id="life-sphere">
@@ -181,14 +254,16 @@
                     </select>
                 </div>
                 
+                <!-- Values Field -->
                 <div class="form-group">
                     <label for="habit-values">Ценности (через запятую):</label>
-                    <input type="text" id="habit-values" placeholder="Введите ценности">
+                    <input type="text" id="habit-values" placeholder="Введите ценности через запятую">
                 </div>
                 
+                <!-- Goals Field -->
                 <div class="form-group">
                     <label for="habit-goals">Цели (через запятую):</label>
-                    <input type="text" id="habit-goals" placeholder="Введите цели">
+                    <input type="text" id="habit-goals" placeholder="Введите цели через запятую">
                 </div>
                 
                 <div class="form-actions">
