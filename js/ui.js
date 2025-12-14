@@ -34,11 +34,16 @@ class UIManager {
     this.nextWeekBtn = document.getElementById('next-week');
     this.weekRangeEl = document.getElementById('week-range');
     
-    // Filter elements
-    this.filterTags = document.getElementById('filter-tags');
-    this.filterTime = document.getElementById('filter-time');
-    this.filterType = document.getElementById('filter-type');
-    this.filterStrength = document.getElementById('filter-strength');
+    // Filter elements - custom dropdowns
+    this.filterTagsButton = document.getElementById('filter-tags-button');
+    this.filterTagsMenu = document.getElementById('filter-tags-menu');
+    this.filterTimeButton = document.getElementById('filter-time-button');
+    this.filterTimeMenu = document.getElementById('filter-time-menu');
+    this.filterTypeButton = document.getElementById('filter-type-button');
+    this.filterTypeMenu = document.getElementById('filter-type-menu');
+    this.filterStrengthButton = document.getElementById('filter-strength-button');
+    this.filterStrengthMenu = document.getElementById('filter-strength-menu');
+    
     this.statusFilters = document.querySelectorAll('.status-filter');
     
     // Main content
@@ -88,34 +93,8 @@ class UIManager {
       this.nextWeekBtn.addEventListener('click', () => this.navigateWeek(1));
     }
     
-    // Filters
-    if (this.filterTags) {
-      this.filterTags.addEventListener('change', (e) => {
-        this.filters.tag = e.target.value;
-        this.render();
-      });
-    }
-    
-    if (this.filterTime) {
-      this.filterTime.addEventListener('change', (e) => {
-        this.filters.timeOfDay = e.target.value;
-        this.render();
-      });
-    }
-    
-    if (this.filterType) {
-      this.filterType.addEventListener('change', (e) => {
-        this.filters.type = e.target.value;
-        this.render();
-      });
-    }
-    
-    if (this.filterStrength) {
-      this.filterStrength.addEventListener('change', (e) => {
-        this.filters.strength = e.target.value;
-        this.render();
-      });
-    }
+    // Custom dropdown events
+    this.bindDropdownEvents();
     
     // Status filter buttons
     if (this.statusFilters) {
@@ -1002,21 +981,112 @@ class UIManager {
     const allHabits = habitManager.getAllHabits();
     const tags = filterManager.getAllTags(allHabits);
     
-    // Clear and repopulate tags dropdown
-    this.filterTags.innerHTML = '<option value="">Все теги</option>';
-    tags.forEach(tag => {
-      const option = document.createElement('option');
-      option.value = tag;
-      option.textContent = tag;
-      this.filterTags.appendChild(option);
-    });
+    // Clear and repopulate tags dropdown menu
+    if (this.filterTagsMenu) {
+      // Keep the "All tags" option
+      const allTagsItem = this.filterTagsMenu.querySelector('[data-value=""]');
+      this.filterTagsMenu.innerHTML = '';
+      if (allTagsItem) {
+        this.filterTagsMenu.appendChild(allTagsItem);
+      }
+      
+      // Add tag items with color indicators
+      tags.forEach(tag => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item tag-item';
+        item.dataset.value = tag;
+        
+        // Get tag color (from existing tagColors or generate new one)
+        const tagColor = this.tagColors[tag] || this.getTagColor(tag);
+        
+        // Set the tag color as a CSS variable for the item
+        item.style.setProperty('--tag-color', tagColor);
+        item.textContent = tag;
+        this.filterTagsMenu.appendChild(item);
+      });
+      
+      // Highlight selected item
+      const selectedItems = this.filterTagsMenu.querySelectorAll('.dropdown-item');
+      selectedItems.forEach(item => {
+        if (item.dataset.value === this.filters.tag) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+      
+      // Update button label
+      if (this.filterTagsButton) {
+        const selectedTag = tags.find(t => t === this.filters.tag);
+        const label = selectedTag || 'Все теги';
+        this.updateDropdownLabel(this.filterTagsButton, label);
+      }
+    }
     
-    // Set selected values
-    this.filterTags.value = this.filters.tag;
-    this.filterTime.value = this.filters.timeOfDay;
-    this.filterType.value = this.filters.type;
-    if (this.filterStrength) {
-      this.filterStrength.value = this.filters.strength;
+    // Update time dropdown selected state
+    if (this.filterTimeMenu) {
+      const timeItems = this.filterTimeMenu.querySelectorAll('.dropdown-item');
+      timeItems.forEach(item => {
+        if (item.dataset.value === this.filters.timeOfDay) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+      
+      // Update button label
+      if (this.filterTimeButton) {
+        let label = 'Все времена';
+        if (this.filters.timeOfDay === 'morning') label = '🌅 Утро';
+        else if (this.filters.timeOfDay === 'day') label = '☀️ День';
+        else if (this.filters.timeOfDay === 'evening') label = '🌙 Вечер';
+        this.updateDropdownLabel(this.filterTimeButton, label);
+      }
+    }
+    
+    // Update type dropdown selected state
+    if (this.filterTypeMenu) {
+      const typeItems = this.filterTypeMenu.querySelectorAll('.dropdown-item');
+      typeItems.forEach(item => {
+        if (item.dataset.value === this.filters.type) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+      
+      // Update button label
+      if (this.filterTypeButton) {
+        let label = 'Все типы';
+        if (this.filters.type === 'checkbox') label = '☑️ Чекбокс';
+        else if (this.filters.type === 'text') label = '📝 Текст';
+        else if (this.filters.type === 'emoji') label = '😊 Эмодзи';
+        else if (this.filters.type === 'checkbox_2') label = '☑️ Чекбокс 2 части';
+        else if (this.filters.type === 'checkbox_3') label = '☑️ Чекбокс 3 части';
+        else if (this.filters.type === 'checkbox_4') label = '☑️ Чекбокс 4 части';
+        this.updateDropdownLabel(this.filterTypeButton, label);
+      }
+    }
+    
+    // Update strength dropdown selected state
+    if (this.filterStrengthMenu) {
+      const strengthItems = this.filterStrengthMenu.querySelectorAll('.dropdown-item');
+      strengthItems.forEach(item => {
+        if (item.dataset.value === this.filters.strength) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+      
+      // Update button label
+      if (this.filterStrengthButton) {
+        let label = 'Любая сила';
+        if (this.filters.strength === 'weak') label = '🔴 Слабые (0-5)';
+        else if (this.filters.strength === 'medium') label = '🟡 Средние (6-15)';
+        else if (this.filters.strength === 'strong') label = '🟢 Сильные (16+)';
+        this.updateDropdownLabel(this.filterStrengthButton, label);
+      }
     }
     
     // Update status filter buttons
@@ -1108,6 +1178,12 @@ class UIManager {
         html += `<div class="habit-actions">`;
         html += `<button class="restore-habit-btn" data-habit-id="${habit.id}">Восстановить</button>`;
         html += `<button class="permanently-delete-habit-btn" data-habit-id="${habit.id}">Удалить</button>`;
+        html += `</div>`;
+      } else if (habit.status === 'archived' && this.filters.status === 'archived') {
+        // Show activate button for archived habits when viewing archived habits
+        html += `<div class="habit-actions">`;
+        html += `<button class="activate-from-archive-btn" data-habit-id="${habit.id}" data-action="activate-from-archive">Активировать</button>`;
+        html += `<button class="edit-habit-btn" data-habit-id="${habit.id}">✏️</button>`;
         html += `</div>`;
       } else {
         html += `<div class="habit-actions">`;
@@ -1430,7 +1506,17 @@ class UIManager {
         }
       });
     });
-    
+
+    // Bind activate buttons for archived habits (same as restore but without confirmation dialog)
+    document.querySelectorAll('[data-action="activate-from-archive"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const habitId = btn.dataset.habitId;
+        habitManager.restoreHabit(habitId, 'active');
+        this.render();
+      });
+    });
+
     // Bind permanent delete buttons (for trashed habits)
     document.querySelectorAll('.permanently-delete-habit-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
@@ -1496,7 +1582,14 @@ class UIManager {
         
         timeGroups[time].habits.forEach((habit, index) => {
           html += `<tr class="${index % 2 === 0 ? 'even' : 'odd'}">`;
-          html += `<td>${habit.name}</td>`;
+          html += `<td>${habit.name}`;
+          
+          // Show activate button for archived habits when viewing archived habits
+          if (habit.status === 'archived' && this.filters.status === 'archived') {
+            html += ` <button class="activate-from-archive-btn small" data-habit-id="${habit.id}" data-action="activate-from-archive">Активировать</button>`;
+          }
+          
+          html += `</td>`;
           html += `<td>${this.renderHabitCell(habit, today)}</td>`;
           html += '</tr>';
         });
@@ -1821,6 +1914,200 @@ class UIManager {
     const allHabits = habitManager.getAllHabits();
     const filteredHabits = filterManager.applyFilters(allHabits, this.filters);
     return filterManager.applySorting(filteredHabits, this.sortBy);
+  }
+
+  /**
+   * Setup filter button functionality
+   * @param {HTMLElement} button - Button element
+   * @param {HTMLElement} menu - Dropdown menu element
+   * @param {Function} onChange - Callback function when selection changes
+   */
+  setupFilterButton(button, menu, onChange) {
+    button.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!menu.contains(e.target) && !button.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    menu.querySelectorAll('option').forEach(option => {
+      option.addEventListener('click', () => {
+        const value = option.value;
+        button.textContent = option.textContent;
+        menu.classList.add('hidden');
+        onChange(value);
+      });
+    });
+  }
+
+  /**
+   * Bind events for custom dropdowns
+   */
+  bindDropdownEvents() {
+    // Tags dropdown
+    if (this.filterTagsButton && this.filterTagsMenu) {
+      this.filterTagsButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterTagsMenu, this.filterTagsButton);
+      });
+      
+      // Handle item selection
+      this.filterTagsMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.tag = value;
+          
+          // Update button label
+          const label = value || 'Все теги';
+          this.updateDropdownLabel(this.filterTagsButton, label);
+          this.filterTagsMenu.classList.add('hidden');
+          this.filterTagsButton.classList.remove('active');
+          this.render();
+        }
+      });
+    }
+    
+    // Time dropdown
+    if (this.filterTimeButton && this.filterTimeMenu) {
+      this.filterTimeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterTimeMenu, this.filterTimeButton);
+      });
+      
+      // Handle item selection
+      this.filterTimeMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.timeOfDay = value;
+          
+          // Update button label with emoji
+          let label = 'Все времена';
+          if (value === 'morning') label = '🌅 Утро';
+          else if (value === 'day') label = '☀️ День';
+          else if (value === 'evening') label = '🌙 Вечер';
+          
+          this.updateDropdownLabel(this.filterTimeButton, label);
+          this.filterTimeMenu.classList.add('hidden');
+          this.filterTimeButton.classList.remove('active');
+          this.render();
+        }
+      });
+    }
+    
+    // Type dropdown
+    if (this.filterTypeButton && this.filterTypeMenu) {
+      this.filterTypeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterTypeMenu, this.filterTypeButton);
+      });
+      
+      // Handle item selection
+      this.filterTypeMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.type = value;
+          
+          // Update button label with emoji
+          let label = 'Все типы';
+          if (value === 'checkbox') label = '☑️ Чекбокс';
+          else if (value === 'text') label = '📝 Текст';
+          else if (value === 'emoji') label = '😊 Эмодзи';
+          else if (value === 'checkbox_2') label = '☑️ Чекбокс 2 части';
+          else if (value === 'checkbox_3') label = '☑️ Чекбокс 3 части';
+          else if (value === 'checkbox_4') label = '☑️ Чекбокс 4 части';
+          
+          this.updateDropdownLabel(this.filterTypeButton, label);
+          this.filterTypeMenu.classList.add('hidden');
+          this.filterTypeButton.classList.remove('active');
+          this.render();
+        }
+      });
+    }
+    
+    // Strength dropdown
+    if (this.filterStrengthButton && this.filterStrengthMenu) {
+      this.filterStrengthButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterStrengthMenu, this.filterStrengthButton);
+      });
+      
+      // Handle item selection
+      this.filterStrengthMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.strength = value;
+          
+          // Update button label with emoji
+          let label = 'Любая сила';
+          if (value === 'weak') label = '🔴 Слабые (0-5)';
+          else if (value === 'medium') label = '🟡 Средние (6-15)';
+          else if (value === 'strong') label = '🟢 Сильные (16+)';
+          
+          this.updateDropdownLabel(this.filterStrengthButton, label);
+          this.filterStrengthMenu.classList.add('hidden');
+          this.filterStrengthButton.classList.remove('active');
+          this.render();
+        }
+      });
+    }
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.custom-dropdown')) {
+        this.closeAllDropdowns();
+      }
+    });
+  }
+
+  /**
+   * Toggle dropdown visibility
+   * @param {HTMLElement} menu - Dropdown menu element
+   * @param {HTMLElement} button - Dropdown button element
+   */
+  toggleDropdown(menu, button) {
+    const isVisible = !menu.classList.contains('hidden');
+    
+    // Close all dropdowns first
+    this.closeAllDropdowns();
+    
+    if (!isVisible) {
+      menu.classList.remove('hidden');
+      button.classList.add('active');
+    }
+  }
+
+  /**
+   * Close all dropdowns
+   */
+  closeAllDropdowns() {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+      menu.classList.add('hidden');
+    });
+    document.querySelectorAll('.dropdown-button').forEach(button => {
+      button.classList.remove('active');
+    });
+  }
+
+  /**
+   * Update dropdown button label
+   * @param {HTMLElement} button - Dropdown button element
+   * @param {string} text - New label text
+   */
+  updateDropdownLabel(button, text) {
+    const label = button.querySelector('.dropdown-label');
+    if (label) {
+      // Special handling for tags to show color indicator
+      if (button.id === 'filter-tags-button' && text !== 'Все теги') {
+        // Find the tag color
+        const tagColor = this.tagColors[text] || this.getTagColor(text);
+        label.innerHTML = `<span class="tag-color-indicator" style="background-color: ${tagColor}; width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px;"></span>${text}`;
+      } else {
+        label.textContent = text;
+      }
+    }
   }
 }
 

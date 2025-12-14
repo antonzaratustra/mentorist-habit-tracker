@@ -27,8 +27,10 @@
             </div>
             <div class="navigation-controls">
                 <button id="prev-week" class="nav-button">←</button>
-                <span id="week-range">Неделя: 1-7 декабря</span>
-                <div id="mentor-progress-container" class="mentor-progress-container"></div>
+                <div class="week-navigation">
+                    <span id="week-range">Неделя: 1-7 декабря</span>
+                    <div id="mentor-progress-container" class="mentor-progress-container"></div>
+                </div>
                 <button id="next-week" class="nav-button">→</button>
             </div>
         </div>
@@ -49,30 +51,92 @@
         <div class="nav-group">
             <h3>Фильтры</h3>
             <div class="filters">
-                <select id="filter-tags">
-                    <option value="">Все теги</option>
-                </select>
-                <select id="filter-time">
-                    <option value="">Все времена</option>
-                    <option value="morning">Утро</option>
-                    <option value="day">День</option>
-                    <option value="evening">Вечер</option>
-                </select>
-                <select id="filter-type">
-                    <option value="">Все типы</option>
-                    <option value="checkbox">Чекбокс</option>
-                    <option value="text">Текст</option>
-                    <option value="emoji">Эмодзи</option>
-                    <option value="checkbox_2">Чекбокс 2 части</option>
-                    <option value="checkbox_3">Чекбокс 3 части</option>
-                    <option value="checkbox_4">Чекбокс 4 части</option>
-                </select>
-                <select id="filter-strength">
-                    <option value="">Любая сила</option>
-                    <option value="weak">Слабые (0-5)</option>
-                    <option value="medium">Средние (6-15)</option>
-                    <option value="strong">Сильные (16+)</option>
-                </select>
+                <!-- Custom Tags Dropdown -->
+                <div class="custom-dropdown">
+                    <button id="filter-tags-button" class="dropdown-button">
+                        <span class="dropdown-label">Все теги</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div id="filter-tags-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-item" data-value="">Все теги</div>
+                        <!-- Tags will be populated dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Custom Time Dropdown -->
+                <div class="custom-dropdown">
+                    <button id="filter-time-button" class="dropdown-button">
+                        <span class="dropdown-label">Все времена</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div id="filter-time-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-item" data-value="">
+                            <span>Все времена</span>
+                        </div>
+                        <div class="dropdown-item" data-value="morning">
+                            <span>🌅 Утро</span>
+                        </div>
+                        <div class="dropdown-item" data-value="day">
+                            <span>☀️ День</span>
+                        </div>
+                        <div class="dropdown-item" data-value="evening">
+                            <span>🌙 Вечер</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom Type Dropdown -->
+                <div class="custom-dropdown">
+                    <button id="filter-type-button" class="dropdown-button">
+                        <span class="dropdown-label">Все типы</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div id="filter-type-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-item" data-value="">
+                            <span>Все типы</span>
+                        </div>
+                        <div class="dropdown-item" data-value="checkbox">
+                            <span>☑️ Чекбокс</span>
+                        </div>
+                        <div class="dropdown-item" data-value="text">
+                            <span>📝 Текст</span>
+                        </div>
+                        <div class="dropdown-item" data-value="emoji">
+                            <span>😊 Эмодзи</span>
+                        </div>
+                        <div class="dropdown-item" data-value="checkbox_2">
+                            <span>☑️ Чекбокс 2 части</span>
+                        </div>
+                        <div class="dropdown-item" data-value="checkbox_3">
+                            <span>☑️ Чекбокс 3 части</span>
+                        </div>
+                        <div class="dropdown-item" data-value="checkbox_4">
+                            <span>☑️ Чекбокс 4 части</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom Strength Dropdown -->
+                <div class="custom-dropdown">
+                    <button id="filter-strength-button" class="dropdown-button">
+                        <span class="dropdown-label">Любая сила</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div id="filter-strength-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-item" data-value="">
+                            <span>Любая сила</span>
+                        </div>
+                        <div class="dropdown-item" data-value="weak">
+                            <span>🔴 Слабые (0-5)</span>
+                        </div>
+                        <div class="dropdown-item" data-value="medium">
+                            <span>🟡 Средние (6-15)</span>
+                        </div>
+                        <div class="dropdown-item" data-value="strong">
+                            <span>🟢 Сильные (16+)</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
