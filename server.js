@@ -30,20 +30,12 @@ const server = http.createServer((req, res) => {
     if (err) {
       if (err.code === 'ENOENT') {
         // File not found
-        fs.readFile(path.join(process.cwd(), '404.html'), (err, content404) => {
-          if (err) {
-            // No 404 page, send plain text
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('404 Not Found');
-          } else {
-            res.writeHead(404, { 'Content-Type': 'text/html' });
-            res.end(content404, 'utf-8');
-          }
-        });
+        res.writeHead(404);
+        res.end('404 Not Found');
       } else {
         // Server error
         res.writeHead(500);
-        res.end(`Server Error: ${err.code}`);
+        res.end('500 Internal Server Error');
       }
     } else {
       // Success

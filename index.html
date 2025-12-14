@@ -13,10 +13,12 @@
         <div class="header-content">
             <div class="header-controls">
                 <button id="help-button" class="icon-button help-button">&#63;</button>
+            </div>
+            <h1>Mentorist Habit Tracker</h1>
+            <div class="header-controls">
                 <button id="theme-toggle" class="icon-button"><span>🌙</span></button>
                 <button id="accent-color-toggle" class="icon-button">🎨</button>
             </div>
-            <h1>Mentorist Habit Tracker</h1>
         </div>
         <div class="header-stats">
             <div class="current-date" id="current-date"></div>
@@ -47,7 +49,7 @@
         <div class="nav-group">
             <h3>Фильтры</h3>
             <div class="filters">
-                <!-- First row of filters -->
+                <!-- First row of filters: Tags, Strength, Goals -->
                 <div class="filter-row">
                     <!-- Tags dropdown -->
                     <div class="custom-dropdown">
@@ -60,40 +62,6 @@
                       </div>
                     </div>
                     
-                    <!-- Time dropdown -->
-                    <div class="custom-dropdown">
-                      <button id="filter-time-button" class="dropdown-button">
-                        <span class="dropdown-label">Все времена</span>
-                        <span class="dropdown-arrow">▼</span>
-                      </button>
-                      <div id="filter-time-menu" class="dropdown-menu hidden">
-                        <div class="dropdown-item" data-value="">Все времена</div>
-                        <div class="dropdown-item" data-value="morning">🌅 Утро</div>
-                        <div class="dropdown-item" data-value="day">☀️ День</div>
-                        <div class="dropdown-item" data-value="evening">🌙 Вечер</div>
-                      </div>
-                    </div>
-                    
-                    <!-- Type dropdown -->
-                    <div class="custom-dropdown">
-                      <button id="filter-type-button" class="dropdown-button">
-                        <span class="dropdown-label">Все типы</span>
-                        <span class="dropdown-arrow">▼</span>
-                      </button>
-                      <div id="filter-type-menu" class="dropdown-menu hidden">
-                        <div class="dropdown-item" data-value="">Все типы</div>
-                        <div class="dropdown-item" data-value="checkbox">☑️ Чекбокс</div>
-                        <div class="dropdown-item" data-value="text">📝 Текст</div>
-                        <div class="dropdown-item" data-value="emoji">😊 Эмодзи</div>
-                        <div class="dropdown-item" data-value="checkbox_2">☑️ Чекбокс 2 части</div>
-                        <div class="dropdown-item" data-value="checkbox_3">☑️ Чекбокс 3 части</div>
-                        <div class="dropdown-item" data-value="checkbox_4">☑️ Чекбокс 4 части</div>
-                      </div>
-                    </div>
-                </div>
-                
-                <!-- Second row of filters -->
-                <div class="filter-row">
                     <!-- Strength dropdown -->
                     <div class="custom-dropdown">
                       <button id="filter-strength-button" class="dropdown-button">
@@ -105,6 +73,34 @@
                         <div class="dropdown-item" data-value="weak">🔴 Слабые (0-5)</div>
                         <div class="dropdown-item" data-value="medium">🟡 Средние (6-15)</div>
                         <div class="dropdown-item" data-value="strong">🟢 Сильные (16+)</div>
+                      </div>
+                    </div>
+                    
+                    <!-- Goals dropdown (full width) -->
+                    <div class="custom-dropdown">
+                      <button id="filter-goals-button" class="dropdown-button">
+                        <span class="dropdown-label">Все цели</span>
+                        <span class="dropdown-arrow">▼</span>
+                      </button>
+                      <div id="filter-goals-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-item" data-value="">Все цели</div>
+                      </div>
+                    </div>
+                </div>
+                
+                <!-- Second row of filters: Time, Life Sphere, Type -->
+                <div class="filter-row">
+                    <!-- Time dropdown -->
+                    <div class="custom-dropdown">
+                      <button id="filter-time-button" class="dropdown-button">
+                        <span class="dropdown-label">Все времена</span>
+                        <span class="dropdown-arrow">▼</span>
+                      </button>
+                      <div id="filter-time-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-item" data-value="">Все времена</div>
+                        <div class="dropdown-item" data-value="morning">🌅 Утро</div>
+                        <div class="dropdown-item" data-value="day">☀️ День</div>
+                        <div class="dropdown-item" data-value="evening">🌙 Вечер</div>
                       </div>
                     </div>
                     
@@ -127,6 +123,26 @@
                       </div>
                     </div>
                     
+                    <!-- Type dropdown -->
+                    <div class="custom-dropdown">
+                      <button id="filter-type-button" class="dropdown-button">
+                        <span class="dropdown-label">Все типы</span>
+                        <span class="dropdown-arrow">▼</span>
+                      </button>
+                      <div id="filter-type-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-item" data-value="">Все типы</div>
+                        <div class="dropdown-item" data-value="checkbox">☑️ Чекбокс</div>
+                        <div class="dropdown-item" data-value="text">📝 Текст</div>
+                        <div class="dropdown-item" data-value="emoji">😊 Эмодзи</div>
+                        <div class="dropdown-item" data-value="checkbox_2">☑️ Чекбокс 2 части</div>
+                        <div class="dropdown-item" data-value="checkbox_3">☑️ Чекбокс 3 части</div>
+                        <div class="dropdown-item" data-value="checkbox_4">☑️ Чекбокс 4 части</div>
+                      </div>
+                    </div>
+                </div>
+                
+                <!-- Third row of filters: Values -->
+                <div class="filter-row">
                     <!-- Values dropdown -->
                     <div class="custom-dropdown">
                       <button id="filter-values-button" class="dropdown-button">
@@ -135,20 +151,6 @@
                       </button>
                       <div id="filter-values-menu" class="dropdown-menu hidden">
                         <div class="dropdown-item" data-value="">Все ценности</div>
-                      </div>
-                    </div>
-                </div>
-                
-                <!-- Third row of filters -->
-                <div class="filter-row">
-                    <!-- Goals dropdown -->
-                    <div class="custom-dropdown">
-                      <button id="filter-goals-button" class="dropdown-button">
-                        <span class="dropdown-label">Все цели</span>
-                        <span class="dropdown-arrow">▼</span>
-                      </button>
-                      <div id="filter-goals-menu" class="dropdown-menu hidden">
-                        <div class="dropdown-item" data-value="">Все цели</div>
                       </div>
                     </div>
                 </div>
