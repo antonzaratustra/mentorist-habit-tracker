@@ -7,9 +7,10 @@ This document describes the implementation of habit type conversion functionalit
 ## Key Features
 
 1. **Data Preservation**: Habit strength and statistics are preserved during type conversions
-2. **User Warnings**: Users are warned about potential data loss before converting habit types
+2. **User Warnings**: Users are warned about potential data loss before converting habit types using custom modals
 3. **Intelligent Data Conversion**: Existing entries are appropriately converted between different habit types
-4. **Consistent UI Experience**: Conversion warnings are shown in the UI when users change habit types
+4. **Consistent UI Experience**: Conversion warnings are shown in custom modals when users change habit types
+5. **Detailed Information**: Warning messages provide clear, detailed information about what will happen during conversion
 
 ## Implementation Details
 
@@ -21,9 +22,10 @@ This document describes the implementation of habit type conversion functionalit
 - Calls entry conversion method to handle entry data migration
 
 #### getConversionWarning Method
-- Provides specific warnings for different conversion scenarios
+- Provides specific, detailed warnings for different conversion scenarios
 - Explains what data might be lost or transformed during conversion
 - Uses user-friendly language to describe the implications
+- Includes information about how strength will be affected
 
 #### getTypeDisplayName Method
 - Provides localized display names for different habit types
@@ -48,8 +50,13 @@ This document describes the implementation of habit type conversion functionalit
 ### 3. UIManager Class Modifications
 
 #### handleHabitFormSubmit Method
-- Shows conversion warnings when users change habit types
+- Made async to properly handle the custom modal
+- Shows conversion warnings using custom modals when users change habit types
 - Requires user confirmation before proceeding with potentially destructive conversions
+
+#### showConfirm Method
+- Already existed and is used for showing custom confirmation dialogs
+- Provides consistent UI experience across the application
 
 ### 4. Conversion Logic
 
@@ -78,22 +85,24 @@ This document describes the implementation of habit type conversion functionalit
 A comprehensive test suite is included in `test-habit-type-conversion.js` that verifies:
 1. Habit creation and initial state
 2. Entry creation and strength calculation
-3. Conversions between all supported habit types
-4. Strength preservation through conversions
-5. Proper entry data transformation
+3. Detailed warning message generation
+4. Conversions between all supported habit types
+5. Strength preservation through conversions
+6. Proper entry data transformation
 
 ## Files Modified
 
-1. `js/habits.js` - Added conversion logic and warning system
+1. `js/habits.js` - Added conversion logic and improved warning system
 2. `js/entries.js` - Added entry conversion and enhanced strength calculation
-3. `js/ui.js` - Added UI warnings for habit type changes
+3. `js/ui.js` - Added UI warnings for habit type changes using custom modals
 4. `test-habit-type-conversion.js` - Comprehensive test suite
 5. `run-tests.html` - Browser-based test runner
+6. `HABIT_CONVERSION_IMPLEMENTATION.md` - This documentation
 
 ## Usage
 
 When a user changes a habit type through the UI:
-1. A warning dialog is shown explaining the conversion implications
+1. A detailed warning dialog is shown in a custom modal explaining the conversion implications
 2. The user must confirm before proceeding
 3. All existing entries are converted according to the defined logic
 4. Habit strength is preserved throughout the process
@@ -106,3 +115,28 @@ When a user changes a habit type through the UI:
 3. Time-of-day settings migration
 4. Strength calculation consistency across different habit types
 5. Graceful handling of missing data structures
+
+## Warning Message Examples
+
+### Checkbox to Multi-part Checkbox
+```
+ВНИМАНИЕ: При конвертации из простого чекбокса в многочастевой (2 части):
+
+• Существующие данные о выполнении будут преобразованы
+• Если привычка была выполнена, ТОЛЬКО первая часть будет отмечена как выполненная
+• Сила привычки сохранится, но способ подсчета изменится
+
+Продолжить конвертацию?
+```
+
+### Text to Checkbox
+```
+ВНИМАНИЕ: При конвертации из текстового поля в простой чекбокс:
+
+• Существующие записи будут преобразованы в состояние чекбокса
+• Если поле было заполнено, привычка будет считаться ВЫПОЛНЕННОЙ
+• Пустые поля будут считаться НЕВЫПОЛНЕННЫМИ
+• Сила привычки сохранится, но способ подсчета изменится
+
+Продолжить конвертацию?
+```

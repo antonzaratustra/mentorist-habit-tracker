@@ -46,8 +46,25 @@ function runHabitConversionTests() {
   console.log('Habit strength after entries:', updatedHabit.strength);
   console.log('✓ Entries created successfully');
   
-  // Test 3: Convert checkbox to checkbox_2
-  console.log('\n--- Test 3: Convert checkbox to checkbox_2 ---');
+  // Test 3: Get conversion warning messages
+  console.log('\n--- Test 3: Get conversion warnings ---');
+  const warning1 = habitManager.getConversionWarning('checkbox', 'checkbox_2');
+  console.log('Warning for checkbox → checkbox_2:', warning1);
+  console.assert(warning1 && warning1.includes('ВНИМАНИЕ'), 'Should have detailed warning message');
+  
+  const warning2 = habitManager.getConversionWarning('checkbox_2', 'checkbox');
+  console.log('Warning for checkbox_2 → checkbox:', warning2);
+  console.assert(warning2 && warning2.includes('ВНИМАНИЕ'), 'Should have detailed warning message');
+  
+  const warning3 = habitManager.getConversionWarning('text', 'checkbox');
+  console.log('Warning for text → checkbox:', warning3);
+  console.assert(warning3 && warning3.includes('ВНИМАНИЕ'), 'Should have detailed warning message');
+  
+  console.log('✓ Conversion warnings generated successfully');
+  
+  // Test 4: Convert checkbox to checkbox_2
+  console.log('\n--- Test 4: Convert checkbox to checkbox_2 ---');
+  // This would normally show a modal, but we'll test the conversion logic directly
   const convertedHabit1 = habitManager.updateHabit(testHabit.id, { type: 'checkbox_2' });
   console.assert(convertedHabit1.type === 'checkbox_2', 'Habit should be checkbox_2 type');
   
@@ -56,8 +73,8 @@ function runHabitConversionTests() {
   console.log('Entries after conversion to checkbox_2:', entries1);
   console.log('✓ Conversion to checkbox_2 successful');
   
-  // Test 4: Convert checkbox_2 to text
-  console.log('\n--- Test 4: Convert checkbox_2 to text ---');
+  // Test 5: Convert checkbox_2 to text
+  console.log('\n--- Test 5: Convert checkbox_2 to text ---');
   const convertedHabit2 = habitManager.updateHabit(testHabit.id, { type: 'text' });
   console.assert(convertedHabit2.type === 'text', 'Habit should be text type');
   
@@ -66,8 +83,8 @@ function runHabitConversionTests() {
   console.log('Entries after conversion to text:', entries2);
   console.log('✓ Conversion to text successful');
   
-  // Test 5: Convert text to emoji
-  console.log('\n--- Test 5: Convert text to emoji ---');
+  // Test 6: Convert text to emoji
+  console.log('\n--- Test 6: Convert text to emoji ---');
   const convertedHabit3 = habitManager.updateHabit(testHabit.id, { type: 'emoji' });
   console.assert(convertedHabit3.type === 'emoji', 'Habit should be emoji type');
   
@@ -76,8 +93,8 @@ function runHabitConversionTests() {
   console.log('Entries after conversion to emoji:', entries3);
   console.log('✓ Conversion to emoji successful');
   
-  // Test 6: Convert emoji back to checkbox
-  console.log('\n--- Test 6: Convert emoji to checkbox ---');
+  // Test 7: Convert emoji back to checkbox
+  console.log('\n--- Test 7: Convert emoji to checkbox ---');
   const convertedHabit4 = habitManager.updateHabit(testHabit.id, { type: 'checkbox' });
   console.assert(convertedHabit4.type === 'checkbox', 'Habit should be checkbox type');
   
@@ -86,8 +103,8 @@ function runHabitConversionTests() {
   console.log('Entries after conversion to checkbox:', entries4);
   console.log('✓ Conversion back to checkbox successful');
   
-  // Test 7: Verify strength preservation
-  console.log('\n--- Test 7: Verify strength preservation ---');
+  // Test 8: Verify strength preservation
+  console.log('\n--- Test 8: Verify strength preservation ---');
   const finalHabit = habitManager.getHabitById(testHabit.id);
   console.log('Final habit strength:', finalHabit.strength);
   console.log('✓ Strength preserved through conversions');
