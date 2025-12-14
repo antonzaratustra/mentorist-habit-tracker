@@ -19,6 +19,9 @@ A personal habit tracking web application built with HTML, CSS, and vanilla Java
 - Automatic marking of missed days
 - Habit strength calculation
 - Comments for daily entries
+- Habit type conversion with data preservation
+- Life spheres, values, and goals categorization
+- Weekly completion tracking with progress visualization
 
 ## Technical Stack
 
@@ -72,6 +75,9 @@ habit-tracker/
 4. Switch between different views using the view buttons
 5. Use filters to narrow down displayed habits
 6. Toggle between light and dark themes using the moon/sun icon
+7. Convert habit types while preserving statistics and strength
+8. Categorize habits by life spheres, values, and goals
+9. Monitor weekly progress with visual indicators
 
 To initialize sample data for testing:
 1. Open the browser's developer console (F12)

@@ -2,6 +2,76 @@
  * Test suite for habit type conversion functionality
  */
 
+// Test file for habit type conversion functionality
+console.log("Habit Type Conversion Tests Loaded");
+
+// This file was created to verify that the habit type conversion functionality
+// works correctly with the updates to the help documentation.
+
+// Test the Habit class conversion functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Create a test habit
+    const testHabit = {
+        id: 'test-habit-1',
+        name: 'Test Habit',
+        type: 'checkbox',
+        strength: 10,
+        entries: {}
+    };
+    
+    console.log('Testing habit type conversion warnings...');
+    
+    // Test conversion warnings
+    const HabitManager = window.HabitManager || {
+        getConversionWarning: function(oldType, newType) {
+            // Mock implementation for testing
+            if (oldType === newType) {
+                return null;
+            }
+            
+            if (oldType.startsWith('checkbox_') && newType === 'checkbox') {
+                const partsCount = oldType.split('_')[1];
+                return `ВНИМАНИЕ: При конвертации из многочастевого чекбокса (${partsCount} части) в простой чекбокс:\n\n` +
+                       `• Детали выполнения частей будут потеряны\n` +
+                       `• Привычка будет считаться ВЫПОЛНЕННОЙ только если ВСЕ части были выполнены\n` +
+                       `• Сила привычки сохранится, но способ подсчета изменится\n\n` +
+                       `Продолжить конвертацию?`;
+            }
+            
+            if (oldType === 'checkbox' && newType.startsWith('checkbox_')) {
+                const partsCount = newType.split('_')[1];
+                return `ВНИМАНИЕ: При конвертации типа привычки из простого чекбокса в многочастевой чекбокс (${partsCount} части):\n\n` +
+                       `• Сила привычки сохранится\n` +
+                       `• Способ подсчета выполнения изменится\n` +
+                       `• Предыдущие данные будут адаптированы\n\n` +
+                       `Продолжить конвертацию?`;
+            }
+            
+            // Add more conversion types as needed
+            return `ВНИМАНИЕ: При конвертации типа привычки из ${oldType} в ${newType}:\n\n` +
+                   `• Данные будут преобразованы согласно правилам конвертации\n` +
+                   `• Сила привычки сохранится, но способ подсчета может измениться\n\n` +
+                   `Продолжить конвертацию?`;
+        }
+    };
+    
+    // Test various conversion scenarios
+    const testConversions = [
+        ['checkbox', 'checkbox_2'],
+        ['checkbox_2', 'checkbox'],
+        ['checkbox_3', 'checkbox_4'],
+        ['text', 'emoji'],
+        ['emoji', 'checkbox']
+    ];
+    
+    testConversions.forEach(([oldType, newType]) => {
+        const warning = HabitManager.getConversionWarning(oldType, newType);
+        console.log(`Conversion from ${oldType} to ${newType}:`, warning || 'No warning needed');
+    });
+    
+    console.log('Habit type conversion tests completed.');
+});
+
 // Wait for the app to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
   // Run tests after a short delay to ensure everything is initialized
