@@ -27,10 +27,8 @@
             </div>
             <div class="navigation-controls">
                 <button id="prev-week" class="nav-button">←</button>
-                <div class="week-navigation">
-                    <span id="week-range">Неделя: 1-7 декабря</span>
-                    <div id="mentor-progress-container" class="mentor-progress-container"></div>
-                </div>
+                <span id="week-range">Неделя: 1-7 декабря</span>
+                <div id="mentor-progress-container" class="mentor-progress-container"></div>
                 <button id="next-week" class="nav-button">→</button>
             </div>
         </div>
@@ -51,129 +49,30 @@
         <div class="nav-group">
             <h3>Фильтры</h3>
             <div class="filters">
-                <!-- Custom Tags Dropdown -->
-                <div class="custom-dropdown">
-                    <button id="filter-tags-button" class="dropdown-button">
-                        <span class="dropdown-label">Все теги</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </button>
-                    <div id="filter-tags-menu" class="dropdown-menu hidden">
-                        <div class="dropdown-item" data-value="">Все теги</div>
-                        <!-- Tags will be populated dynamically -->
-                    </div>
-                </div>
-                
-                <!-- Custom Time Dropdown -->
-                <div class="custom-dropdown">
-                    <button id="filter-time-button" class="dropdown-button">
-                        <span class="dropdown-label">Все времена</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </button>
-                    <div id="filter-time-menu" class="dropdown-menu hidden">
-                        <div class="dropdown-item" data-value="">
-                            <span>Все времена</span>
-                        </div>
-                        <div class="dropdown-item" data-value="morning">
-                            <span>🌅 Утро</span>
-                        </div>
-                        <div class="dropdown-item" data-value="day">
-                            <span>☀️ День</span>
-                        </div>
-                        <div class="dropdown-item" data-value="evening">
-                            <span>🌙 Вечер</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Custom Type Dropdown -->
-                <div class="custom-dropdown">
-                    <button id="filter-type-button" class="dropdown-button">
-                        <span class="dropdown-label">Все типы</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </button>
-                    <div id="filter-type-menu" class="dropdown-menu hidden">
-                        <div class="dropdown-item" data-value="">
-                            <span>Все типы</span>
-                        </div>
-                        <div class="dropdown-item" data-value="checkbox">
-                            <span>☑️ Чекбокс</span>
-                        </div>
-                        <div class="dropdown-item" data-value="text">
-                            <span>📝 Текст</span>
-                        </div>
-                        <div class="dropdown-item" data-value="emoji">
-                            <span>😊 Эмодзи</span>
-                        </div>
-                        <div class="dropdown-item" data-value="checkbox_2">
-                            <span>☑️ Чекбокс 2 части</span>
-                        </div>
-                        <div class="dropdown-item" data-value="checkbox_3">
-                            <span>☑️ Чекбокс 3 части</span>
-                        </div>
-                        <div class="dropdown-item" data-value="checkbox_4">
-                            <span>☑️ Чекбокс 4 части</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Custom Strength Dropdown -->
-                <div class="custom-dropdown">
-                    <button id="filter-strength-button" class="dropdown-button">
-                        <span class="dropdown-label">Любая сила</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </button>
-                    <div id="filter-strength-menu" class="dropdown-menu hidden">
-                        <div class="dropdown-item" data-value="">
-                            <span>Любая сила</span>
-                        </div>
-                        <div class="dropdown-item" data-value="weak">
-                            <span>🔴 Слабые (0-5)</span>
-                        </div>
-                        <div class="dropdown-item" data-value="medium">
-                            <span>🟡 Средние (6-15)</span>
-                        </div>
-                        <div class="dropdown-item" data-value="strong">
-                            <span>🟢 Сильные (16+)</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Custom Life Sphere Dropdown -->
-                <div class="custom-dropdown">
-                    <button id="filter-life-sphere-button" class="dropdown-button">
-                        <span class="dropdown-label">Все сферы</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </button>
-                    <div id="filter-life-sphere-menu" class="dropdown-menu hidden">
-                        <div class="dropdown-item" data-value="">
-                            <span>Все сферы</span>
-                        </div>
-                        <div class="dropdown-item" data-value="purpose">
-                            <span>🎯 Призвание</span>
-                        </div>
-                        <div class="dropdown-item" data-value="spirituality">
-                            <span>🌀 Духовность</span>
-                        </div>
-                        <div class="dropdown-item" data-value="relationships">
-                            <span>🤝 Отношения</span>
-                        </div>
-                        <div class="dropdown-item" data-value="environment">
-                            <span>🏠 Окружение</span>
-                        </div>
-                        <div class="dropdown-item" data-value="self-development">
-                            <span>📚 Саморазвитие</span>
-                        </div>
-                        <div class="dropdown-item" data-value="finances">
-                            <span>💰 Финансы</span>
-                        </div>
-                        <div class="dropdown-item" data-value="brightness">
-                            <span>🎉 Яркость жизни</span>
-                        </div>
-                        <div class="dropdown-item" data-value="health">
-                            <span>❤️ Здоровье</span>
-                        </div>
-                    </div>
-                </div>
+                <select id="filter-tags">
+                    <option value="">Все теги</option>
+                </select>
+                <select id="filter-time">
+                    <option value="">Все времена</option>
+                    <option value="morning">Утро</option>
+                    <option value="day">День</option>
+                    <option value="evening">Вечер</option>
+                </select>
+                <select id="filter-type">
+                    <option value="">Все типы</option>
+                    <option value="checkbox">Чекбокс</option>
+                    <option value="text">Текст</option>
+                    <option value="emoji">Эмодзи</option>
+                    <option value="checkbox_2">Чекбокс 2 части</option>
+                    <option value="checkbox_3">Чекбокс 3 части</option>
+                    <option value="checkbox_4">Чекбокс 4 части</option>
+                </select>
+                <select id="filter-strength">
+                    <option value="">Любая сила</option>
+                    <option value="weak">Слабые (0-5)</option>
+                    <option value="medium">Средние (6-15)</option>
+                    <option value="strong">Сильные (16+)</option>
+                </select>
             </div>
         </div>
         
@@ -259,8 +158,17 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="habit-tags">Теги:</label>
+                    <div id="tag-input-container" class="tag-input-container">
+                        <div id="tags-display" class="tags-display"></div>
+                        <input type="text" id="habit-tags-input" placeholder="Введите тег и нажмите Enter или пробел">
+                    </div>
+                    <input type="hidden" id="habit-tags" name="habit-tags">
+                </div>
+                
+                <div class="form-group">
                     <label for="life-sphere">Сфера жизни:</label>
-                    <select id="life-sphere" name="life-sphere">
+                    <select id="life-sphere">
                         <option value="">Выберите сферу жизни</option>
                         <option value="purpose">🎯 Призвание</option>
                         <option value="spirituality">🌀 Духовность</option>
@@ -275,21 +183,12 @@
                 
                 <div class="form-group">
                     <label for="habit-values">Ценности (через запятую):</label>
-                    <input type="text" id="habit-values" name="habit-values" placeholder="Здоровье, Развитие, Семья">
+                    <input type="text" id="habit-values" placeholder="Введите ценности">
                 </div>
                 
                 <div class="form-group">
                     <label for="habit-goals">Цели (через запятую):</label>
-                    <input type="text" id="habit-goals" name="habit-goals" placeholder="Бегать 3 раза в неделю, Читать 20 минут ежедневно">
-                </div>
-                
-                <div class="form-group">
-                    <label for="habit-tags">Теги:</label>
-                    <div id="tag-input-container" class="tag-input-container">
-                        <div id="tags-display" class="tags-display"></div>
-                        <input type="text" id="habit-tags-input" placeholder="Введите тег и нажмите Enter или пробел">
-                    </div>
-                    <input type="hidden" id="habit-tags" name="habit-tags">
+                    <input type="text" id="habit-goals" placeholder="Введите цели">
                 </div>
                 
                 <div class="form-actions">

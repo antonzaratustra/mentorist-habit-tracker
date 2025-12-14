@@ -1,5 +1,8 @@
 // Main application file for Habit Tracker
 
+// Load progress manager
+loadScript('js/progress.js');
+
 class HabitTrackerApp {
   constructor() {
     this.ui = null;

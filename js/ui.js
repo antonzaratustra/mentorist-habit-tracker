@@ -9,10 +9,14 @@ class UIManager {
       tag: '',
       timeOfDay: '',
       type: '',
-      strength: ''
+      strength: '',
+      lifeSphere: '',
+      value: '',
+      goal: ''
     };
     this.sortBy = 'strength';
     this.tagColors = {};
+    this.activeGoal = ''; // Track active goal filter
     
     this.initializeElements();
     this.bindEvents();
@@ -45,6 +49,16 @@ class UIManager {
     this.filterStrengthMenu = document.getElementById('filter-strength-menu');
     this.filterLifeSphereButton = document.getElementById('filter-life-sphere-button');
     this.filterLifeSphereMenu = document.getElementById('filter-life-sphere-menu');
+    this.filterValuesButton = document.getElementById('filter-values-button');
+    this.filterValuesMenu = document.getElementById('filter-values-menu');
+    this.filterGoalsButton = document.getElementById('filter-goals-button');
+    this.filterGoalsMenu = document.getElementById('filter-goals-menu');
+    this.filterLifeSphereButton = document.getElementById('filter-life-sphere-button');
+    this.filterLifeSphereMenu = document.getElementById('filter-life-sphere-menu');
+    this.filterValuesButton = document.getElementById('filter-values-button');
+    this.filterValuesMenu = document.getElementById('filter-values-menu');
+    this.filterGoalsButton = document.getElementById('filter-goals-button');
+    this.filterGoalsMenu = document.getElementById('filter-goals-menu');
     
     this.statusFilters = document.querySelectorAll('.status-filter');
     
@@ -188,6 +202,151 @@ class UIManager {
     
     // Bind confirm modal close buttons
     this.bindConfirmModalEvents();
+  }
+
+  /**
+   * Bind dropdown events
+   */
+  bindDropdownEvents() {
+    // Tags dropdown
+    if (this.filterTagsButton && this.filterTagsMenu) {
+      this.filterTagsButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterTagsMenu, this.filterTagsButton);
+      });
+      
+      this.filterTagsMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.tag = value;
+          this.updateFilters();
+          this.render();
+          this.filterTagsMenu.classList.add('hidden');
+          this.filterTagsButton.classList.remove('active');
+        }
+      });
+    }
+    
+    // Time dropdown
+    if (this.filterTimeButton && this.filterTimeMenu) {
+      this.filterTimeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterTimeMenu, this.filterTimeButton);
+      });
+      
+      this.filterTimeMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.timeOfDay = value;
+          this.updateFilters();
+          this.render();
+          this.filterTimeMenu.classList.add('hidden');
+          this.filterTimeButton.classList.remove('active');
+        }
+      });
+    }
+    
+    // Type dropdown
+    if (this.filterTypeButton && this.filterTypeMenu) {
+      this.filterTypeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterTypeMenu, this.filterTypeButton);
+      });
+      
+      this.filterTypeMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.type = value;
+          this.updateFilters();
+          this.render();
+          this.filterTypeMenu.classList.add('hidden');
+          this.filterTypeButton.classList.remove('active');
+        }
+      });
+    }
+    
+    // Strength dropdown
+    if (this.filterStrengthButton && this.filterStrengthMenu) {
+      this.filterStrengthButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterStrengthMenu, this.filterStrengthButton);
+      });
+      
+      this.filterStrengthMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.strength = value;
+          this.updateFilters();
+          this.render();
+          this.filterStrengthMenu.classList.add('hidden');
+          this.filterStrengthButton.classList.remove('active');
+        }
+      });
+    }
+    
+    // Life sphere dropdown
+    if (this.filterLifeSphereButton && this.filterLifeSphereMenu) {
+      this.filterLifeSphereButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterLifeSphereMenu, this.filterLifeSphereButton);
+      });
+      
+      this.filterLifeSphereMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.lifeSphere = value;
+          this.updateFilters();
+          this.render();
+          this.filterLifeSphereMenu.classList.add('hidden');
+          this.filterLifeSphereButton.classList.remove('active');
+        }
+      });
+    }
+    
+    // Values dropdown
+    if (this.filterValuesButton && this.filterValuesMenu) {
+      this.filterValuesButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterValuesMenu, this.filterValuesButton);
+      });
+      
+      this.filterValuesMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.value = value;
+          this.updateFilters();
+          this.render();
+          this.filterValuesMenu.classList.add('hidden');
+          this.filterValuesButton.classList.remove('active');
+        }
+      });
+    }
+    
+    // Goals dropdown
+    if (this.filterGoalsButton && this.filterGoalsMenu) {
+      this.filterGoalsButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDropdown(this.filterGoalsMenu, this.filterGoalsButton);
+      });
+      
+      this.filterGoalsMenu.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-item')) {
+          const value = e.target.dataset.value;
+          this.filters.goal = value;
+          this.updateFilters();
+          this.render();
+          this.filterGoalsMenu.classList.add('hidden');
+          this.filterGoalsButton.classList.remove('active');
+        }
+      });
+    }
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.custom-dropdown')) {
+        this.closeAllDropdowns();
+      }
+    });
   }
 
   /**
@@ -917,8 +1076,10 @@ class UIManager {
    * Render the current view
    */
   render() {
+    console.log('Rendering UI, current view:', this.currentView);
     this.updateHeader();
     this.updateFilters();
+    this.updateGoalsFilter(); // Add this line to update goals filter
     
     switch (this.currentView) {
       case 'week':
@@ -1012,65 +1173,65 @@ class UIManager {
    */
   updateFilters() {
     // Update tags dropdown
-    const allHabits = habitManager.getAllHabits();
-    const tags = filterManager.getAllTags(allHabits);
+    var allHabits = habitManager.getAllHabits();
+    var tags = filterManager.getAllTags(allHabits);
     
     // Clear and repopulate tags dropdown menu
     if (this.filterTagsMenu) {
       // Keep the "All tags" option
-      const allTagsItem = this.filterTagsMenu.querySelector('[data-value=""]');
+      var allTagsItem = this.filterTagsMenu.querySelector('[data-value=""]');
       this.filterTagsMenu.innerHTML = '';
       if (allTagsItem) {
         this.filterTagsMenu.appendChild(allTagsItem);
       }
       
       // Add tag items with color indicators
-      tags.forEach(tag => {
-        const item = document.createElement('div');
+      tags.forEach(function(tag) {
+        var item = document.createElement('div');
         item.className = 'dropdown-item tag-item';
         item.dataset.value = tag;
         
         // Get tag color (from existing tagColors or generate new one)
-        const tagColor = this.tagColors[tag] || this.getTagColor(tag);
+        var tagColor = this.tagColors[tag] || this.getTagColor(tag);
         
         // Set the tag color as a CSS variable for the item
         item.style.setProperty('--tag-color', tagColor);
         item.textContent = tag;
         this.filterTagsMenu.appendChild(item);
-      });
+      }.bind(this));
       
       // Highlight selected item
-      const selectedItems = this.filterTagsMenu.querySelectorAll('.dropdown-item');
-      selectedItems.forEach(item => {
+      var selectedItems = this.filterTagsMenu.querySelectorAll('.dropdown-item');
+      selectedItems.forEach(function(item) {
         if (item.dataset.value === this.filters.tag) {
           item.classList.add('selected');
         } else {
           item.classList.remove('selected');
         }
-      });
+      }.bind(this));
       
       // Update button label
       if (this.filterTagsButton) {
-        const selectedTag = tags.find(t => t === this.filters.tag);
-        const label = selectedTag || 'Все теги';
+        var selectedTag = tags.find(function(t) { return t === this.filters.tag; }.bind(this));
+        var label = selectedTag || 'Все теги';
         this.updateDropdownLabel(this.filterTagsButton, label);
       }
     }
     
     // Update time dropdown selected state
     if (this.filterTimeMenu) {
-      const timeItems = this.filterTimeMenu.querySelectorAll('.dropdown-item');
-      timeItems.forEach(item => {
+      var timeItems = this.filterTimeMenu.querySelectorAll('.dropdown-item');
+      timeItems.forEach(function(item) {
         if (item.dataset.value === this.filters.timeOfDay) {
           item.classList.add('selected');
         } else {
           item.classList.remove('selected');
         }
-      });
+      }.bind(this));
       
       // Update button label
       if (this.filterTimeButton) {
-        let label = 'Все времена';
+        var label = 'Все времена';
         if (this.filters.timeOfDay === 'morning') label = '🌅 Утро';
         else if (this.filters.timeOfDay === 'day') label = '☀️ День';
         else if (this.filters.timeOfDay === 'evening') label = '🌙 Вечер';
@@ -1080,18 +1241,18 @@ class UIManager {
     
     // Update type dropdown selected state
     if (this.filterTypeMenu) {
-      const typeItems = this.filterTypeMenu.querySelectorAll('.dropdown-item');
-      typeItems.forEach(item => {
+      var typeItems = this.filterTypeMenu.querySelectorAll('.dropdown-item');
+      typeItems.forEach(function(item) {
         if (item.dataset.value === this.filters.type) {
           item.classList.add('selected');
         } else {
           item.classList.remove('selected');
         }
-      });
+      }.bind(this));
       
       // Update button label
       if (this.filterTypeButton) {
-        let label = 'Все типы';
+        var label = 'Все типы';
         if (this.filters.type === 'checkbox') label = '☑️ Чекбокс';
         else if (this.filters.type === 'text') label = '📝 Текст';
         else if (this.filters.type === 'emoji') label = '😊 Эмодзи';
@@ -1104,18 +1265,18 @@ class UIManager {
     
     // Update strength dropdown selected state
     if (this.filterStrengthMenu) {
-      const strengthItems = this.filterStrengthMenu.querySelectorAll('.dropdown-item');
-      strengthItems.forEach(item => {
+      var strengthItems = this.filterStrengthMenu.querySelectorAll('.dropdown-item');
+      strengthItems.forEach(function(item) {
         if (item.dataset.value === this.filters.strength) {
           item.classList.add('selected');
         } else {
           item.classList.remove('selected');
         }
-      });
+      }.bind(this));
       
       // Update button label
       if (this.filterStrengthButton) {
-        let label = 'Любая сила';
+        var label = 'Любая сила';
         if (this.filters.strength === 'weak') label = '🔴 Слабые (0-5)';
         else if (this.filters.strength === 'medium') label = '🟡 Средние (6-15)';
         else if (this.filters.strength === 'strong') label = '🟢 Сильные (16+)';
@@ -1123,24 +1284,185 @@ class UIManager {
       }
     }
     
+    // Update life sphere dropdown selected state
+    if (this.filterLifeSphereMenu) {
+      var lifeSphereItems = this.filterLifeSphereMenu.querySelectorAll('.dropdown-item');
+      lifeSphereItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.lifeSphere) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterLifeSphereButton) {
+        var label = 'Все сферы';
+        if (this.filters.lifeSphere === 'purpose') label = '🎯 Призвание';
+        else if (this.filters.lifeSphere === 'spirituality') label = '🌀 Духовность';
+        else if (this.filters.lifeSphere === 'relationships') label = '🤝 Отношения';
+        else if (this.filters.lifeSphere === 'environment') label = '🏠 Окружение';
+        else if (this.filters.lifeSphere === 'self-development') label = '📚 Саморазвитие';
+        else if (this.filters.lifeSphere === 'finances') label = '💰 Финансы';
+        else if (this.filters.lifeSphere === 'brightness') label = '🎉 Яркость жизни';
+        else if (this.filters.lifeSphere === 'health') label = '❤️ Здоровье';
+        this.updateDropdownLabel(this.filterLifeSphereButton, label);
+      }
+    }
+    
+    // Update values dropdown
+    if (this.filterValuesMenu) {
+      // Get all values
+      const allValues = filterManager.getAllValues(allHabits);
+      
+      // Clear and repopulate values dropdown menu
+      // Keep the "All values" option
+      var allValuesItem = this.filterValuesMenu.querySelector('[data-value=""]');
+      this.filterValuesMenu.innerHTML = '';
+      if (allValuesItem) {
+        this.filterValuesMenu.appendChild(allValuesItem);
+      }
+      
+      // Add value items
+      allValues.forEach(function(value) {
+        var item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.dataset.value = value;
+        item.textContent = value;
+        this.filterValuesMenu.appendChild(item);
+      }.bind(this));
+      
+      // Highlight selected item
+      var selectedValueItems = this.filterValuesMenu.querySelectorAll('.dropdown-item');
+      selectedValueItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.value) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterValuesButton) {
+        var selectedValue = allValues.find(function(v) { return v === this.filters.value; }.bind(this));
+        var label = selectedValue || 'Все ценности';
+        this.updateDropdownLabel(this.filterValuesButton, label);
+      }
+    }
+    
+    // Update goals dropdown
+    if (this.filterGoalsMenu) {
+      // Get all goals
+      const allGoals = filterManager.getAllGoals(allHabits);
+      
+      // Clear and repopulate goals dropdown menu
+      // Keep the "All goals" option
+      var allGoalsItem = this.filterGoalsMenu.querySelector('[data-value=""]');
+      this.filterGoalsMenu.innerHTML = '';
+      if (allGoalsItem) {
+        this.filterGoalsMenu.appendChild(allGoalsItem);
+      }
+      
+      // Add goal items
+      allGoals.forEach(function(goal) {
+        var item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.dataset.value = goal;
+        item.textContent = goal;
+        this.filterGoalsMenu.appendChild(item);
+      }.bind(this));
+      
+      // Highlight selected item
+      var selectedGoalItems = this.filterGoalsMenu.querySelectorAll('.dropdown-item');
+      selectedGoalItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.goal) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterGoalsButton) {
+        var selectedGoal = allGoals.find(function(g) { return g === this.filters.goal; }.bind(this));
+        var label = selectedGoal || 'Все цели';
+        this.updateDropdownLabel(this.filterGoalsButton, label);
+      }
+    }
+    
     // Update status filter buttons
     if (this.statusFilters) {
-      this.statusFilters.forEach(btn => {
+      this.statusFilters.forEach(function(btn) {
         if (btn.dataset.status === this.filters.status) {
           btn.classList.add('active');
         } else {
           btn.classList.remove('active');
         }
-      });
+      }.bind(this));
     }
+  }
+
+  /**
+   * Update goals filter in sidebar
+   */
+  updateGoalsFilter() {
+    const goalsFilter = document.getElementById('goals-filter');
+    if (!goalsFilter) return;
+    
+    // Get all habits and extract unique goals
+    const allHabits = habitManager.getAllHabits();
+    const allGoals = filterManager.getAllGoals(allHabits);
+    
+    // Clear existing content
+    goalsFilter.innerHTML = '';
+    
+    // Add "All goals" option
+    const allGoalsTag = document.createElement('div');
+    allGoalsTag.className = `goal-tag ${!this.activeGoal ? 'active' : ''}`;
+    allGoalsTag.textContent = 'Все цели';
+    allGoalsTag.addEventListener('click', () => {
+      this.activeGoal = '';
+      this.render();
+    });
+    goalsFilter.appendChild(allGoalsTag);
+    
+    // Add each goal as a filter tag
+    allGoals.forEach(goal => {
+      const goalTag = document.createElement('div');
+      goalTag.className = `goal-tag ${this.activeGoal === goal ? 'active' : ''}`;
+      goalTag.textContent = goal;
+      goalTag.addEventListener('click', () => {
+        this.activeGoal = this.activeGoal === goal ? '' : goal;
+        this.render();
+      });
+      goalsFilter.appendChild(goalTag);
+    });
+  }
+
+  /**
+   * Get filtered and sorted habits
+   * @returns {Array} Filtered and sorted habits
+   */
+  getFilteredAndSortedHabits() {
+    const allHabits = habitManager.getAllHabits();
+    let filteredHabits = filterManager.applyFilters(allHabits, this.filters);
+    
+    // Apply goal filter if active
+    if (this.activeGoal) {
+      filteredHabits = filteredHabits.filter(habit => habit.goals.includes(this.activeGoal));
+    }
+    
+    return filterManager.applySorting(filteredHabits, this.sortBy);
   }
 
   /**
    * Render week view
    */
   renderWeekView() {
+    console.log('Rendering week view');
     const weekDates = getWeekDates(this.currentWeekStart);
     const habits = this.getFilteredAndSortedHabits();
+    console.log('Habits to render:', habits);
     
     // Check which days are fully completed
     const completedDays = {};
@@ -1247,31 +1569,306 @@ class UIManager {
   }
 
   /**
-   * Get time info for habit
-   * @param {Object} habit - Habit object
-   * @returns {string} Time info string
+   * Render day view
    */
-  getHabitTimeInfo(habit) {
-    if (habit.timeOfDay.single) {
-      const timeLabels = {
-        'morning': '🌅 Утро',
-        'day': '☀️ День',
-        'evening': '🌙 Вечер'
-      };
-      return `<span class="time-tag">${timeLabels[habit.timeOfDay.single] || habit.timeOfDay.single}</span>`;
-    } else if (habit.timeOfDay.parts) {
-      const timeLabels = {
-        'morning': '🌅 Утро',
-        'day': '☀️ День',
-        'evening': '🌙 Вечер'
-      };
-      
-      const times = habit.timeOfDay.parts.map(part => timeLabels[part.time] || part.time);
-      // Remove duplicates
-      const uniqueTimes = [...new Set(times)];
-      return `<span class="time-tag">${uniqueTimes.join(' ')}</span>`;
+  renderDayView() {
+    const today = getCurrentDate();
+    const habits = this.getFilteredAndSortedHabits();
+    
+    // Get current hour to determine active time period
+    const currentHour = new Date().getHours();
+    let activeTimePeriod = 'day';
+    if (currentHour < 12) {
+      activeTimePeriod = 'morning';
+    } else if (currentHour >= 18) {
+      activeTimePeriod = 'evening';
     }
-    return '';
+    
+    let html = '<div class="day-view">';
+    
+    // Group habits by time of day
+    const timeGroups = {
+      morning: { habits: [], label: '🌅 УТРО' },
+      day: { habits: [], label: '☀️ ДЕНЬ' },
+      evening: { habits: [], label: '🌙 ВЕЧЕР' }
+    };
+    
+    habits.forEach(habit => {
+      if (habit.timeOfDay.single) {
+        timeGroups[habit.timeOfDay.single].habits.push(habit);
+      } else if (habit.timeOfDay.parts) {
+        // For multi-part habits, add to each time group
+        habit.timeOfDay.parts.forEach(part => {
+          if (timeGroups[part.time]) {
+            timeGroups[part.time].habits.push({...habit, partIndex: part.partIndex});
+          }
+        });
+      }
+    });
+    
+    // Render each time group
+    ['morning', 'day', 'evening'].forEach(time => {
+      if (timeGroups[time].habits.length > 0) {
+        const isActive = time === activeTimePeriod;
+        html += `<div class="time-group ${isActive ? 'active' : ''}">`;
+        html += `<h3>${timeGroups[time].label}</h3>`;
+        
+        // Create a table for better presentation WITHOUT headers as requested
+        html += '<table class="day-habits-table">';
+        html += '<tbody>';
+        
+        timeGroups[time].habits.forEach((habit, index) => {
+          html += `<tr class="${index % 2 === 0 ? 'even' : 'odd'}">`;
+          html += `<td>${habit.name}`;
+          
+          // Show activate button for archived habits when viewing archived habits
+          if (habit.status === 'archived' && this.filters.status === 'archived') {
+            html += ` <button class="activate-from-archive-btn small" data-habit-id="${habit.id}" data-action="activate-from-archive">Активировать</button>`;
+          }
+          
+          html += `</td>`;
+          html += `<td>${this.renderHabitCell(habit, today)}</td>`;
+          html += '</tr>';
+        });
+        
+        html += '</tbody></table>';
+        html += '</div>';
+      }
+    });
+    
+    // Add comments report at the bottom
+    const todayEntries = entryManager.getEntriesByDate(today);
+    const commentsReport = todayEntries.filter(entry => entry.comment && entry.comment.trim() !== '');
+    
+    if (commentsReport.length > 0) {
+      html += '<div class="comments-report">';
+      html += '<h3>Комментарии за день</h3>';
+      html += '<ul class="comments-list">';
+      
+      commentsReport.forEach(entry => {
+        const habit = habitManager.getHabitById(entry.habitId);
+        if (habit) {
+          html += `<li><strong>${habit.name}:</strong> ${entry.comment}</li>`;
+        }
+      });
+      
+      html += '</ul>';
+      html += '</div>';
+    }
+    
+    html += '</div>';
+    
+    this.habitTableContainer.innerHTML = html;
+    this.bindHabitCellEvents();
+  }
+
+  /**
+   * Render month view
+   */
+  renderMonthView() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    // Get first day of month and last day of month
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    
+    // Get all dates in month
+    const dates = [];
+    for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
+      dates.push(new Date(d));
+    }
+    
+    // Group dates by week
+    const weeks = [];
+    let currentWeek = [];
+    
+    // Add empty cells for days before first day of month
+    const firstDayOfWeek = firstDay.getDay();
+    const offset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1; // Adjust for Monday as first day
+    
+    for (let i = 0; i < offset; i++) {
+      currentWeek.push(null);
+    }
+    
+    dates.forEach(date => {
+      currentWeek.push(date);
+      
+      // If we've reached the end of the week or the end of the month
+      if (currentWeek.length === 7) {
+        weeks.push([...currentWeek]);
+        currentWeek = [];
+      }
+    });
+    
+    // Add remaining days to complete the last week
+    if (currentWeek.length > 0) {
+      while (currentWeek.length < 7) {
+        currentWeek.push(null);
+      }
+      weeks.push(currentWeek);
+    }
+    
+    let html = `<div class="month-view">`;
+    html += `<h2>${now.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}</h2>`;
+    
+    // Create calendar table
+    html += `<table class="month-calendar">`;
+    html += `<thead><tr>`;
+    ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
+      html += `<th>${day}</th>`;
+    });
+    html += `</tr></thead>`;
+    html += `<tbody>`;
+    
+    weeks.forEach((week, weekIndex) => {
+      html += `<tr>`;
+      week.forEach(date => {
+        if (date === null) {
+          html += `<td class="empty-day"></td>`;
+        } else {
+          const dateStr = formatDate(date);
+          // Apply filters to habits when calculating stats
+          const habits = this.getFilteredAndSortedHabits();
+          const dailyStats = statsManager.getDailyStats(dateStr, habits);
+          const completionPercentage = dailyStats.percentage;
+          
+          // Determine cell class based on completion
+          let cellClass = 'calendar-day';
+          if (completionPercentage === 100) {
+            cellClass += ' completed';
+          } else if (completionPercentage >= 50) {
+            cellClass += ' partial';
+          } else if (completionPercentage > 0) {
+            cellClass += ' started';
+          } else {
+            cellClass += ' empty';
+          }
+          
+          // Check if it's today
+          const isToday = formatDate(new Date()) === dateStr;
+          if (isToday) {
+            cellClass += ' today';
+          }
+          
+          html += `<td class="${cellClass}" data-date="${dateStr}">`;
+          html += `<div class="day-number">${date.getDate()}</div>`;
+          html += `<div class="completion-info">${completionPercentage}%</div>`;
+          html += `<div class="completion-bar" style="width: ${completionPercentage}%"></div>`;
+          html += `</td>`;
+        }
+      });
+      html += `</tr>`;
+      
+      // Add week summary row
+      html += `<tr class="week-summary-row">`;
+      week.forEach(date => {
+        if (date === null) {
+          html += `<td class="week-summary-cell empty"></td>`;
+        } else {
+          const dateStr = formatDate(date);
+          // Apply filters to habits when calculating stats
+          const habits = this.getFilteredAndSortedHabits();
+          const dailyStats = statsManager.getDailyStats(dateStr, habits);
+          
+          html += `<td class="week-summary-cell">`;
+          html += `<div class="habit-completion-count">${dailyStats.completed}/${dailyStats.totalHabits}</div>`;
+          html += `</td>`;
+        }
+      });
+      html += `</tr>`;
+    });
+    
+    html += `</tbody></table>`;
+    html += `</div>`;
+    
+    this.habitTableContainer.innerHTML = html;
+    
+    // Add click handlers for calendar days
+    document.querySelectorAll('.calendar-day').forEach(cell => {
+      cell.addEventListener('click', (e) => {
+        const date = cell.dataset.date;
+        this.showDayDetails(date);
+      });
+    });
+  }
+
+  /**
+   * Render a single habit row in the table
+   * @param {Object} habit - Habit object
+   * @param {Array} dates - Array of dates to render
+   */
+  renderHabitRow(habit, dates) {
+    const tbody = this.habitTableContainer.querySelector('tbody');
+    const row = document.createElement('tr');
+    
+    // Habit name cell
+    const nameCell = document.createElement('td');
+    nameCell.textContent = habit.name;
+    nameCell.classList.add('habit-name');
+    nameCell.addEventListener('click', () => {
+      const row = nameCell.closest('tr');
+      row.classList.toggle('expanded');
+    });
+    row.appendChild(nameCell);
+    
+    // Render cells for each date
+    dates.forEach(date => {
+      const cell = document.createElement('td');
+      const entry = entryManager.getEntry(habit.id, date);
+      const isToday = new Date(date).toDateString() === new Date().toDateString();
+      const isNotDone = entry && entry.status === 'not-done';
+      const isDone = entry && entry.status === 'done';
+      const isSkipped = entry && entry.status === 'skipped';
+      const isScheduled = entry && entry.status === 'scheduled';
+      const isCommented = entry && entry.comment;
+      
+      cell.classList.add('habit-cell');
+      cell.classList.add('clickable');
+      cell.classList.add('cursor-pointer');
+      cell.classList.add('border');
+      cell.classList.add('border-gray-300');
+      cell.classList.add('text-center');
+      cell.classList.add('py-2');
+      cell.classList.add('px-4');
+      cell.classList.add('bg-white');
+      cell.classList.add('dark:bg-gray-800');
+      
+      if (isToday) {
+        cell.classList.add('bg-yellow-100');
+        cell.classList.add('dark:bg-yellow-900');
+      }
+      
+      if (isDone) {
+        cell.classList.add('bg-green-100');
+        cell.classList.add('dark:bg-green-900');
+      }
+      
+      if (isNotDone) {
+        cell.classList.add('bg-red-100');
+        cell.classList.add('dark:bg-red-900');
+      }
+      
+      if (isSkipped) {
+        cell.classList.add('bg-gray-100');
+        cell.classList.add('dark:bg-gray-900');
+      }
+      
+      if (isScheduled) {
+        cell.classList.add('bg-blue-100');
+        cell.classList.add('dark:bg-blue-900');
+      }
+      
+      if (isCommented) {
+        cell.classList.add('commented');
+      }
+      
+      cell.addEventListener('click', () => this.toggleHabitEntry(habit.id, date));
+      row.appendChild(cell);
+    });
+    
+    tbody.appendChild(row);
   }
 
   /**
@@ -1344,6 +1941,41 @@ class UIManager {
     }
     
     return `<td class="${cellClass}" data-habit-id="${habit.id}" data-date="${date}">${cellContent}</td>`;
+  }
+
+  /**
+   * Toggle habit entry status
+   * @param {string} habitId - Habit ID
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+  toggleHabitEntry(habitId, date) {
+    const currentEntry = entryManager.getEntry(habitId, date);
+    const currentDate = new Date(date);
+    const isToday = currentDate.toDateString() === new Date().toDateString();
+    const isFuture = currentDate > new Date();
+    const isScheduled = currentEntry && currentEntry.status === 'scheduled';
+    const isDone = currentEntry && currentEntry.status === 'done';
+    const isNotDone = currentEntry && currentEntry.status === 'not-done';
+    const isSkipped = currentEntry && currentEntry.status === 'skipped';
+    
+    if (isFuture) {
+      alert('Нельзя изменять будущие записи');
+      return;
+    }
+    
+    let newStatus = 'scheduled';
+    if (isScheduled) {
+      newStatus = isToday ? 'done' : 'not-done';
+    } else if (isDone) {
+      newStatus = isToday ? 'not-done' : 'scheduled';
+    } else if (isNotDone) {
+      newStatus = isToday ? 'done' : 'scheduled';
+    } else if (isSkipped) {
+      newStatus = isToday ? 'done' : 'scheduled';
+    }
+    
+    entryManager.setEntry(habitId, date, newStatus);
+    this.render();
   }
 
   /**
@@ -1566,97 +2198,484 @@ class UIManager {
   }
 
   /**
-   * Render day view
+   * Render ideas panel
    */
-  renderDayView() {
-    const today = getCurrentDate();
-    const habits = this.getFilteredAndSortedHabits();
-    
-    // Get current hour to determine active time period
-    const currentHour = new Date().getHours();
-    let activeTimePeriod = 'day';
-    if (currentHour < 12) {
-      activeTimePeriod = 'morning';
-    } else if (currentHour >= 18) {
-      activeTimePeriod = 'evening';
+  renderIdeasPanel() {
+    // Get habits based on current filter status
+    let habits;
+    if (this.filters.status === 'trash') {
+      habits = habitManager.getHabitsByStatus('trash');
+    } else if (this.filters.status === 'archived') {
+      habits = habitManager.getHabitsByStatus('archived');
+    } else if (this.filters.status === 'idea') {
+      habits = habitManager.getHabitsByStatus('idea');
+    } else {
+      // For active status, show the ideas panel
+      habits = habitManager.getHabitsByStatus('idea');
     }
     
-    let html = '<div class="day-view">';
+    // If we're not showing active habits or we're in trash/archived/idea view, hide the ideas panel
+    if (this.filters.status !== 'active' || habits.length === 0) {
+      this.ideasPanel.style.display = 'none';
+      return;
+    }
     
-    // Group habits by time of day
-    const timeGroups = {
-      morning: { habits: [], label: '🌅 УТРО' },
-      day: { habits: [], label: '☀️ ДЕНЬ' },
-      evening: { habits: [], label: '🌙 ВЕЧЕР' }
-    };
+    this.ideasPanel.style.display = 'block';
     
-    habits.forEach(habit => {
-      if (habit.timeOfDay.single) {
-        timeGroups[habit.timeOfDay.single].habits.push(habit);
-      } else if (habit.timeOfDay.parts) {
-        // For multi-part habits, add to each time group
-        habit.timeOfDay.parts.forEach(part => {
-          if (timeGroups[part.time]) {
-            timeGroups[part.time].habits.push({...habit, partIndex: part.partIndex});
-          }
-        });
-      }
-    });
+    // Check if panel should be collapsed
+    const isCollapsed = this.ideasPanel.classList.contains('collapsed');
     
-    // Render each time group
-    ['morning', 'day', 'evening'].forEach(time => {
-      if (timeGroups[time].habits.length > 0) {
-        const isActive = time === activeTimePeriod;
-        html += `<div class="time-group ${isActive ? 'active' : ''}">`;
-        html += `<h3>${timeGroups[time].label}</h3>`;
-        
-        // Create a table for better presentation WITHOUT headers as requested
-        html += '<table class="day-habits-table">';
-        html += '<tbody>';
-        
-        timeGroups[time].habits.forEach((habit, index) => {
-          html += `<tr class="${index % 2 === 0 ? 'even' : 'odd'}">`;
-          html += `<td>${habit.name}`;
-          
-          // Show activate button for archived habits when viewing archived habits
-          if (habit.status === 'archived' && this.filters.status === 'archived') {
-            html += ` <button class="activate-from-archive-btn small" data-habit-id="${habit.id}" data-action="activate-from-archive">Активировать</button>`;
-          }
-          
-          html += `</td>`;
-          html += `<td>${this.renderHabitCell(habit, today)}</td>`;
-          html += '</tr>';
-        });
-        
-        html += '</tbody></table>';
-        html += '</div>';
-      }
-    });
-    
-    // Add comments report at the bottom
-    const todayEntries = entryManager.getEntriesByDate(today);
-    const commentsReport = todayEntries.filter(entry => entry.comment && entry.comment.trim() !== '');
-    
-    if (commentsReport.length > 0) {
-      html += '<div class="comments-report">';
-      html += '<h3>Комментарии за день</h3>';
-      html += '<ul class="comments-list">';
-      
-      commentsReport.forEach(entry => {
-        const habit = habitManager.getHabitById(entry.habitId);
-        if (habit) {
-          html += `<li><strong>${habit.name}:</strong> ${entry.comment}</li>`;
-        }
+    let html = '<ul class="ideas-list">';
+    if (!isCollapsed) {
+      habits.forEach(idea => {
+        html += `<li>
+          ${idea.name} 
+          <button class="activate-idea" data-habit-id="${idea.id}">Активировать</button>
+        </li>`;
       });
-      
-      html += '</ul>';
-      html += '</div>';
+    }
+    html += '</ul>';
+    
+    const ideasContent = this.ideasPanel.querySelector('.ideas-content');
+    if (ideasContent) {
+      ideasContent.innerHTML = html;
     }
     
-    html += '</div>';
+    // Bind activate buttons
+    document.querySelectorAll('.activate-idea').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const habitId = e.target.dataset.habitId;
+        habitManager.restoreHabit(habitId, 'active');
+        this.render();
+      });
+    });
+  }
+
+  /**
+   * Update daily stats
+   */
+  updateStats() {
+    const now = new Date();
+    const dayStats = statsManager.getDailyStats(formatDate(now));
     
-    this.habitTableContainer.innerHTML = html;
-    this.bindHabitCellEvents();
+    if (this.dailyStatsEl) {
+      this.dailyStatsEl.textContent = `Выполнено: ${dayStats.completed} / ${dayStats.totalHabits} (${dayStats.percentage}%)`;
+    }
+  }
+
+  /**
+   * Update filter options
+   */
+  updateFilters() {
+    // Update tags dropdown
+    var allHabits = habitManager.getAllHabits();
+    var tags = filterManager.getAllTags(allHabits);
+    
+    // Clear and repopulate tags dropdown menu
+    if (this.filterTagsMenu) {
+      // Keep the "All tags" option
+      var allTagsItem = this.filterTagsMenu.querySelector('[data-value=""]');
+      this.filterTagsMenu.innerHTML = '';
+      if (allTagsItem) {
+        this.filterTagsMenu.appendChild(allTagsItem);
+      }
+      
+      // Add tag items with color indicators
+      tags.forEach(function(tag) {
+        var item = document.createElement('div');
+        item.className = 'dropdown-item tag-item';
+        item.dataset.value = tag;
+        
+        // Get tag color (from existing tagColors or generate new one)
+        var tagColor = this.tagColors[tag] || this.getTagColor(tag);
+        
+        // Set the tag color as a CSS variable for the item
+        item.style.setProperty('--tag-color', tagColor);
+        item.textContent = tag;
+        this.filterTagsMenu.appendChild(item);
+      }.bind(this));
+      
+      // Highlight selected item
+      var selectedItems = this.filterTagsMenu.querySelectorAll('.dropdown-item');
+      selectedItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.tag) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterTagsButton) {
+        var selectedTag = tags.find(function(t) { return t === this.filters.tag; }.bind(this));
+        var label = selectedTag || 'Все теги';
+        this.updateDropdownLabel(this.filterTagsButton, label);
+      }
+    }
+    
+    // Update time dropdown selected state
+    if (this.filterTimeMenu) {
+      var timeItems = this.filterTimeMenu.querySelectorAll('.dropdown-item');
+      timeItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.timeOfDay) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterTimeButton) {
+        var label = 'Все времена';
+        if (this.filters.timeOfDay === 'morning') label = '🌅 Утро';
+        else if (this.filters.timeOfDay === 'day') label = '☀️ День';
+        else if (this.filters.timeOfDay === 'evening') label = '🌙 Вечер';
+        this.updateDropdownLabel(this.filterTimeButton, label);
+      }
+    }
+    
+    // Update type dropdown selected state
+    if (this.filterTypeMenu) {
+      var typeItems = this.filterTypeMenu.querySelectorAll('.dropdown-item');
+      typeItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.type) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterTypeButton) {
+        var label = 'Все типы';
+        if (this.filters.type === 'checkbox') label = '☑️ Чекбокс';
+        else if (this.filters.type === 'text') label = '📝 Текст';
+        else if (this.filters.type === 'emoji') label = '😊 Эмодзи';
+        else if (this.filters.type === 'checkbox_2') label = '☑️ Чекбокс 2 части';
+        else if (this.filters.type === 'checkbox_3') label = '☑️ Чекбокс 3 части';
+        else if (this.filters.type === 'checkbox_4') label = '☑️ Чекбокс 4 части';
+        this.updateDropdownLabel(this.filterTypeButton, label);
+      }
+    }
+    
+    // Update strength dropdown selected state
+    if (this.filterStrengthMenu) {
+      var strengthItems = this.filterStrengthMenu.querySelectorAll('.dropdown-item');
+      strengthItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.strength) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterStrengthButton) {
+        var label = 'Любая сила';
+        if (this.filters.strength === 'weak') label = '🔴 Слабые (0-5)';
+        else if (this.filters.strength === 'medium') label = '🟡 Средние (6-15)';
+        else if (this.filters.strength === 'strong') label = '🟢 Сильные (16+)';
+        this.updateDropdownLabel(this.filterStrengthButton, label);
+      }
+    }
+    
+    // Update life sphere dropdown selected state
+    if (this.filterLifeSphereMenu) {
+      var lifeSphereItems = this.filterLifeSphereMenu.querySelectorAll('.dropdown-item');
+      lifeSphereItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.lifeSphere) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterLifeSphereButton) {
+        var label = 'Все сферы';
+        if (this.filters.lifeSphere === 'purpose') label = '🎯 Призвание';
+        else if (this.filters.lifeSphere === 'spirituality') label = '🌀 Духовность';
+        else if (this.filters.lifeSphere === 'relationships') label = '🤝 Отношения';
+        else if (this.filters.lifeSphere === 'environment') label = '🏠 Окружение';
+        else if (this.filters.lifeSphere === 'self-development') label = '📚 Саморазвитие';
+        else if (this.filters.lifeSphere === 'finances') label = '💰 Финансы';
+        else if (this.filters.lifeSphere === 'brightness') label = '🎉 Яркость жизни';
+        else if (this.filters.lifeSphere === 'health') label = '❤️ Здоровье';
+        this.updateDropdownLabel(this.filterLifeSphereButton, label);
+      }
+    }
+    
+    // Update values dropdown
+    if (this.filterValuesMenu) {
+      // Get all values
+      const allValues = filterManager.getAllValues(allHabits);
+      
+      // Clear and repopulate values dropdown menu
+      // Keep the "All values" option
+      var allValuesItem = this.filterValuesMenu.querySelector('[data-value=""]');
+      this.filterValuesMenu.innerHTML = '';
+      if (allValuesItem) {
+        this.filterValuesMenu.appendChild(allValuesItem);
+      }
+      
+      // Add value items
+      allValues.forEach(function(value) {
+        var item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.dataset.value = value;
+        item.textContent = value;
+        this.filterValuesMenu.appendChild(item);
+      }.bind(this));
+      
+      // Highlight selected item
+      var selectedValueItems = this.filterValuesMenu.querySelectorAll('.dropdown-item');
+      selectedValueItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.value) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterValuesButton) {
+        var selectedValue = allValues.find(function(v) { return v === this.filters.value; }.bind(this));
+        var label = selectedValue || 'Все ценности';
+        this.updateDropdownLabel(this.filterValuesButton, label);
+      }
+    }
+    
+    // Update goals dropdown
+    if (this.filterGoalsMenu) {
+      // Get all goals
+      const allGoals = filterManager.getAllGoals(allHabits);
+      
+      // Clear and repopulate goals dropdown menu
+      // Keep the "All goals" option
+      var allGoalsItem = this.filterGoalsMenu.querySelector('[data-value=""]');
+      this.filterGoalsMenu.innerHTML = '';
+      if (allGoalsItem) {
+        this.filterGoalsMenu.appendChild(allGoalsItem);
+      }
+      
+      // Add goal items
+      allGoals.forEach(function(goal) {
+        var item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.dataset.value = goal;
+        item.textContent = goal;
+        this.filterGoalsMenu.appendChild(item);
+      }.bind(this));
+      
+      // Highlight selected item
+      var selectedGoalItems = this.filterGoalsMenu.querySelectorAll('.dropdown-item');
+      selectedGoalItems.forEach(function(item) {
+        if (item.dataset.value === this.filters.goal) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }.bind(this));
+      
+      // Update button label
+      if (this.filterGoalsButton) {
+        var selectedGoal = allGoals.find(function(g) { return g === this.filters.goal; }.bind(this));
+        var label = selectedGoal || 'Все цели';
+        this.updateDropdownLabel(this.filterGoalsButton, label);
+      }
+    }
+    
+    // Update status filter buttons
+    if (this.statusFilters) {
+      this.statusFilters.forEach(function(btn) {
+        if (btn.dataset.status === this.filters.status) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      }.bind(this));
+    }
+  }
+
+  /**
+   * Get time info for habit
+   * @param {Object} habit - Habit object
+   * @returns {string} Time info string
+   */
+  getHabitTimeInfo(habit) {
+    if (habit.timeOfDay.single) {
+      const timeLabels = {
+        'morning': '🌅 Утро',
+        'day': '☀️ День',
+        'evening': '🌙 Вечер'
+      };
+      return `<span class="time-tag">${timeLabels[habit.timeOfDay.single] || habit.timeOfDay.single}</span>`;
+    } else if (habit.timeOfDay.parts) {
+      const timeLabels = {
+        'morning': '🌅 Утро',
+        'day': '☀️ День',
+        'evening': '🌙 Вечер'
+      };
+      
+      const times = habit.timeOfDay.parts.map(part => timeLabels[part.time] || part.time);
+      // Remove duplicates
+      const uniqueTimes = [...new Set(times)];
+      return `<span class="time-tag">${uniqueTimes.join(' ')}</span>`;
+    }
+    return '';
+  }
+
+  /**
+   * Bind events to habit cells
+   */
+  bindHabitCellEvents() {
+    // Bind checkbox clicks
+    document.querySelectorAll('.checkbox-cell').forEach(cell => {
+      // Check if event listener is already attached
+      if (cell.dataset.listenerAttached === 'true') {
+        return;
+      }
+      
+      // Mark that event listener is attached
+      cell.dataset.listenerAttached = 'true';
+      
+      cell.addEventListener('click', (e) => {
+        const habitId = cell.dataset.habitId;
+        const date = cell.dataset.date;
+        
+        // Get the habit to determine its type
+        const habit = habitManager.getHabitById(habitId);
+        if (!habit) return;
+        
+        if (habit.type === 'checkbox') {
+          // Simple checkbox toggle
+          entryManager.toggleCheckboxState(habitId, date);
+        } else if (habit.type.startsWith('checkbox_')) {
+          // Multi-part checkbox - we need to determine which part to toggle
+          const entry = entryManager.getEntry(habitId, date);
+          const partsCount = parseInt(habit.type.split('_')[1]);
+          
+          // Initialize parts array if needed
+          let parts = entry && entry.checkboxState.parts && entry.checkboxState.parts.length === partsCount ? 
+            [...entry.checkboxState.parts] : Array(partsCount).fill(false);
+          
+          // Find the first unchecked part and check it
+          let partChecked = false;
+          for (let i = 0; i < parts.length; i++) {
+            if (!parts[i]) {
+              parts[i] = true;
+              partChecked = true;
+              break;
+            }
+          }
+          
+          // If all parts were checked, uncheck all (reset to 0/X)
+          if (!partChecked && parts.every(p => p)) {
+            parts = Array(partsCount).fill(false);
+          }
+          
+          // Create or update the entry
+          if (entry) {
+            // Update existing entry
+            entryManager.updateEntry(habitId, date, {
+              checkboxState: {
+                completed: parts.every(p => p), // Completed if all parts are checked
+                failed: false,
+                parts: parts
+              }
+            });
+          } else {
+            // Create new entry
+            entryManager.createEntry(habitId, date, {
+              checkboxState: {
+                completed: parts.every(p => p), // Completed if all parts are checked
+                failed: false,
+                parts: parts
+              }
+            });
+          }
+          
+          // Recalculate habit strength
+          entryManager.recalculateHabitStrength(habitId);
+        }
+        
+        this.render();
+      });
+    });
+    
+    // Bind emoji cell clicks
+    document.querySelectorAll('.emoji-cell').forEach(cell => {
+      // Check if event listener is already attached
+      if (cell.dataset.listenerAttached === 'true') {
+        return;
+      }
+      
+      // Mark that event listener is attached
+      cell.dataset.listenerAttached = 'true';
+      
+      cell.addEventListener('click', (e) => {
+        const habitId = cell.dataset.habitId;
+        const date = cell.dataset.date;
+        
+        // Get the habit to determine available emojis
+        const habit = habitManager.getHabitById(habitId);
+        if (!habit || !habit.emojiOptions || habit.emojiOptions.length === 0) return;
+        
+        // Get current entry
+        const entry = entryManager.getEntry(habitId, date);
+        const currentEmoji = entry && entry.emojiValue ? entry.emojiValue : '';
+        
+        // Find next emoji in the list
+        const currentIndex = habit.emojiOptions.indexOf(currentEmoji);
+        const nextIndex = (currentIndex + 1) % habit.emojiOptions.length;
+        const nextEmoji = habit.emojiOptions[nextIndex];
+        
+        // Save new emoji
+        entryManager.setEmojiValue(habitId, date, nextEmoji);
+        // Recalculate habit strength
+        entryManager.recalculateHabitStrength(habitId);
+        this.render();
+      });
+    });
+    
+    // Bind comment icon clicks
+    document.querySelectorAll('.comment-icon').forEach(icon => {
+      // Check if event listener is already attached
+      if (icon.dataset.listenerAttached === 'true') {
+        return;
+      }
+      
+      // Mark that event listener is attached
+      icon.dataset.listenerAttached = 'true';
+      
+      icon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const cell = icon.closest('td');
+        const habitId = cell.dataset.habitId;
+        const date = cell.dataset.date;
+        this.openCommentModal(habitId, date);
+      });
+    });
+    
+    // Bind text input changes with debounce
+    document.querySelectorAll('.text-cell input').forEach(input => {
+      // Check if event listener is already attached
+      if (input.dataset.listenerAttached === 'true') {
+        return;
+      }
+      
+      // Mark that event listener is attached
+      input.dataset.listenerAttached = 'true';
+      
+      input.addEventListener('input', (e) => {
+        const habitId = input.dataset.habitId;
+        const date = input.dataset.date;
+        const value = input.value;
+        entryManager.setTextValue(habitId, date, value);
+        // Recalculate habit strength immediately
+        entryManager.recalculateHabitStrength(habitId);
+      });
+    });
   }
 
   /**
@@ -1671,138 +2690,6 @@ class UIManager {
       case 'evening': return '🌙 ВЕЧЕР';
       default: return time;
     }
-  }
-
-  /**
-   * Render month view
-   */
-  renderMonthView() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    
-    // Get first day of month and last day of month
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    
-    // Get all dates in month
-    const dates = [];
-    for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
-      dates.push(new Date(d));
-    }
-    
-    // Group dates by week
-    const weeks = [];
-    let currentWeek = [];
-    
-    // Add empty cells for days before first day of month
-    const firstDayOfWeek = firstDay.getDay();
-    const offset = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1; // Adjust for Monday as first day
-    
-    for (let i = 0; i < offset; i++) {
-      currentWeek.push(null);
-    }
-    
-    dates.forEach(date => {
-      currentWeek.push(date);
-      
-      // If we've reached the end of the week or the end of the month
-      if (currentWeek.length === 7) {
-        weeks.push([...currentWeek]);
-        currentWeek = [];
-      }
-    });
-    
-    // Add remaining days to complete the last week
-    if (currentWeek.length > 0) {
-      while (currentWeek.length < 7) {
-        currentWeek.push(null);
-      }
-      weeks.push(currentWeek);
-    }
-    
-    let html = `<div class="month-view">`;
-    html += `<h2>${now.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}</h2>`;
-    
-    // Create calendar table
-    html += `<table class="month-calendar">`;
-    html += `<thead><tr>`;
-    ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
-      html += `<th>${day}</th>`;
-    });
-    html += `</tr></thead>`;
-    html += `<tbody>`;
-    
-    weeks.forEach((week, weekIndex) => {
-      html += `<tr>`;
-      week.forEach(date => {
-        if (date === null) {
-          html += `<td class="empty-day"></td>`;
-        } else {
-          const dateStr = formatDate(date);
-          // Apply filters to habits when calculating stats
-          const habits = this.getFilteredAndSortedHabits();
-          const dailyStats = statsManager.getDailyStats(dateStr, habits);
-          const completionPercentage = dailyStats.percentage;
-          
-          // Determine cell class based on completion
-          let cellClass = 'calendar-day';
-          if (completionPercentage === 100) {
-            cellClass += ' completed';
-          } else if (completionPercentage >= 50) {
-            cellClass += ' partial';
-          } else if (completionPercentage > 0) {
-            cellClass += ' started';
-          } else {
-            cellClass += ' empty';
-          }
-          
-          // Check if it's today
-          const isToday = formatDate(new Date()) === dateStr;
-          if (isToday) {
-            cellClass += ' today';
-          }
-          
-          html += `<td class="${cellClass}" data-date="${dateStr}">`;
-          html += `<div class="day-number">${date.getDate()}</div>`;
-          html += `<div class="completion-info">${completionPercentage}%</div>`;
-          html += `<div class="completion-bar" style="width: ${completionPercentage}%"></div>`;
-          html += `</td>`;
-        }
-      });
-      html += `</tr>`;
-      
-      // Add week summary row
-      html += `<tr class="week-summary-row">`;
-      week.forEach(date => {
-        if (date === null) {
-          html += `<td class="week-summary-cell empty"></td>`;
-        } else {
-          const dateStr = formatDate(date);
-          // Apply filters to habits when calculating stats
-          const habits = this.getFilteredAndSortedHabits();
-          const dailyStats = statsManager.getDailyStats(dateStr, habits);
-          
-          html += `<td class="week-summary-cell">`;
-          html += `<div class="habit-completion-count">${dailyStats.completed}/${dailyStats.totalHabits}</div>`;
-          html += `</td>`;
-        }
-      });
-      html += `</tr>`;
-    });
-    
-    html += `</tbody></table>`;
-    html += `</div>`;
-    
-    this.habitTableContainer.innerHTML = html;
-    
-    // Add click handlers for calendar days
-    document.querySelectorAll('.calendar-day').forEach(cell => {
-      cell.addEventListener('click', (e) => {
-        const date = cell.dataset.date;
-        this.showDayDetails(date);
-      });
-    });
   }
 
   /**
@@ -1926,29 +2813,7 @@ class UIManager {
     });
   }
 
-  /**
-   * Update statistics display
-   */
-  updateStats() {
-    const today = getCurrentDate();
-    const dailyStats = statsManager.getDailyStats(today);
-    
-    if (this.dailyStatsEl) {
-      this.dailyStatsEl.textContent = `Выполнено сегодня: ${dailyStats.completed}/${dailyStats.totalHabits} (${dailyStats.percentage}%)`;
-    }
-    
-    // Убираем дублирующую информацию об активных привычках
-  }
 
-  /**
-   * Get filtered and sorted habits
-   * @returns {Array} Filtered and sorted habits
-   */
-  getFilteredAndSortedHabits() {
-    const allHabits = habitManager.getAllHabits();
-    const filteredHabits = filterManager.applyFilters(allHabits, this.filters);
-    return filterManager.applySorting(filteredHabits, this.sortBy);
-  }
 
   /**
    * Setup filter button functionality
@@ -1977,156 +2842,7 @@ class UIManager {
     });
   }
 
-  /**
-   * Bind events for custom dropdowns
-   */
-  bindDropdownEvents() {
-    // Tags dropdown
-    if (this.filterTagsButton && this.filterTagsMenu) {
-      this.filterTagsButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleDropdown(this.filterTagsMenu, this.filterTagsButton);
-      });
-      
-      // Handle item selection
-      this.filterTagsMenu.addEventListener('click', (e) => {
-        if (e.target.classList.contains('dropdown-item')) {
-          const value = e.target.dataset.value;
-          this.filters.tag = value;
-          
-          // Update button label
-          const label = value || 'Все теги';
-          this.updateDropdownLabel(this.filterTagsButton, label);
-          this.filterTagsMenu.classList.add('hidden');
-          this.filterTagsButton.classList.remove('active');
-          this.render();
-        }
-      });
-    }
-    
-    // Time dropdown
-    if (this.filterTimeButton && this.filterTimeMenu) {
-      this.filterTimeButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleDropdown(this.filterTimeMenu, this.filterTimeButton);
-      });
-      
-      // Handle item selection
-      this.filterTimeMenu.addEventListener('click', (e) => {
-        if (e.target.classList.contains('dropdown-item')) {
-          const value = e.target.dataset.value;
-          this.filters.timeOfDay = value;
-          
-          // Update button label with emoji
-          let label = 'Все времена';
-          if (value === 'morning') label = '🌅 Утро';
-          else if (value === 'day') label = '☀️ День';
-          else if (value === 'evening') label = '🌙 Вечер';
-          
-          this.updateDropdownLabel(this.filterTimeButton, label);
-          this.filterTimeMenu.classList.add('hidden');
-          this.filterTimeButton.classList.remove('active');
-          this.render();
-        }
-      });
-    }
-    
-    // Type dropdown
-    if (this.filterTypeButton && this.filterTypeMenu) {
-      this.filterTypeButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleDropdown(this.filterTypeMenu, this.filterTypeButton);
-      });
-      
-      // Handle item selection
-      this.filterTypeMenu.addEventListener('click', (e) => {
-        if (e.target.classList.contains('dropdown-item')) {
-          const value = e.target.dataset.value;
-          this.filters.type = value;
-          
-          // Update button label with emoji
-          let label = 'Все типы';
-          if (value === 'checkbox') label = '☑️ Чекбокс';
-          else if (value === 'text') label = '📝 Текст';
-          else if (value === 'emoji') label = '😊 Эмодзи';
-          else if (value === 'checkbox_2') label = '☑️ Чекбокс 2 части';
-          else if (value === 'checkbox_3') label = '☑️ Чекбокс 3 части';
-          else if (value === 'checkbox_4') label = '☑️ Чекбокс 4 части';
-          
-          this.updateDropdownLabel(this.filterTypeButton, label);
-          this.filterTypeMenu.classList.add('hidden');
-          this.filterTypeButton.classList.remove('active');
-          this.render();
-        }
-      });
-    }
-    
-    // Strength dropdown
-    if (this.filterStrengthButton && this.filterStrengthMenu) {
-      this.filterStrengthButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleDropdown(this.filterStrengthMenu, this.filterStrengthButton);
-      });
-      
-      // Handle item selection
-      this.filterStrengthMenu.addEventListener('click', (e) => {
-        if (e.target.classList.contains('dropdown-item')) {
-          const value = e.target.dataset.value;
-          this.filters.strength = value;
-          
-          // Update button label with emoji
-          let label = 'Любая сила';
-          if (value === 'weak') label = '🔴 Слабые (0-5)';
-          else if (value === 'medium') label = '🟡 Средние (6-15)';
-          else if (value === 'strong') label = '🟢 Сильные (16+)';
-          
-          this.updateDropdownLabel(this.filterStrengthButton, label);
-          this.filterStrengthMenu.classList.add('hidden');
-          this.filterStrengthButton.classList.remove('active');
-          this.render();
-        }
-      });
-    }
-    
-    // Life Sphere dropdown
-    if (this.filterLifeSphereButton && this.filterLifeSphereMenu) {
-      this.filterLifeSphereButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.toggleDropdown(this.filterLifeSphereMenu, this.filterLifeSphereButton);
-      });
-      
-      // Handle item selection
-      this.filterLifeSphereMenu.addEventListener('click', (e) => {
-        if (e.target.classList.contains('dropdown-item')) {
-          const value = e.target.dataset.value;
-          this.filters.lifeSphere = value;
-          
-          // Update button label with emoji
-          let label = 'Все сферы';
-          if (value === 'purpose') label = '🎯 Призвание';
-          else if (value === 'spirituality') label = '🌀 Духовность';
-          else if (value === 'relationships') label = '🤝 Отношения';
-          else if (value === 'environment') label = '🏠 Окружение';
-          else if (value === 'self-development') label = '📚 Саморазвитие';
-          else if (value === 'finances') label = '💰 Финансы';
-          else if (value === 'brightness') label = '🎉 Яркость жизни';
-          else if (value === 'health') label = '❤️ Здоровье';
-          
-          this.updateDropdownLabel(this.filterLifeSphereButton, label);
-          this.filterLifeSphereMenu.classList.add('hidden');
-          this.filterLifeSphereButton.classList.remove('active');
-          this.render();
-        }
-      });
-    }
-    
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.custom-dropdown')) {
-        this.closeAllDropdowns();
-      }
-    });
-  }
+
 
   /**
    * Toggle dropdown visibility

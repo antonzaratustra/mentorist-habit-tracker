@@ -142,6 +142,21 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+/**
+ * Load a script dynamically
+ * @param {string} src - Script source URL
+ * @returns {Promise} Promise that resolves when script is loaded
+ */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
 // Make functions available globally
 window.generateId = generateId;
 window.formatDate = formatDate;
@@ -153,3 +168,4 @@ window.debounce = debounce;
 window.deepClone = deepClone;
 window.arraysEqual = arraysEqual;
 window.capitalize = capitalize;
+window.loadScript = loadScript;

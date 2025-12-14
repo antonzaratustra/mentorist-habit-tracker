@@ -104,6 +104,28 @@ class FilterManager {
   }
 
   /**
+   * Filter habits by value
+   * @param {Array} habits - Array of habits
+   * @param {string} value - Value to filter by
+   * @returns {Array} Filtered habits
+   */
+  filterByValue(habits, value) {
+    if (!value) return habits;
+    return habits.filter(habit => habit.values.includes(value));
+  }
+
+  /**
+   * Filter habits by goal
+   * @param {Array} habits - Array of habits
+   * @param {string} goal - Goal to filter by
+   * @returns {Array} Filtered habits
+   */
+  filterByGoal(habits, goal) {
+    if (!goal) return habits;
+    return habits.filter(habit => habit.goals.includes(goal));
+  }
+
+  /**
    * Apply multiple filters
    * @param {Array} habits - Array of habits
    * @param {Object} filters - Filter criteria
@@ -134,6 +156,14 @@ class FilterManager {
     
     if (filters.strength) {
       filtered = this.filterByStrength(filtered, filters.strength);
+    }
+    
+    if (filters.value) {
+      filtered = this.filterByValue(filtered, filters.value);
+    }
+    
+    if (filters.goal) {
+      filtered = this.filterByGoal(filtered, filters.goal);
     }
     
     return filtered;
