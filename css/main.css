@@ -41,6 +41,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
+  margin-top: 0.5rem; /* Add spacing between header and stats */
   background-color: rgba(255, 255, 255, 0.1);
   border-top: 1px solid var(--border-color);
 }
@@ -434,135 +435,9 @@ body {
 }
 
 .filters {
-  width: 100%;
-}
-
-/* Filter rows - exactly 3 rows as requested */
-.filter-row {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  width: 100%;
-}
-
-.filter-row:last-child {
-  margin-bottom: 0;
-}
-
-/* First row: Tags, Time, Type (3 filters) */
-.filter-row:first-child {
-  display: flex;
-}
-
-.filter-row:first-child .custom-dropdown {
-  flex: 1;
-}
-
-/* Second row: Strength, Life Sphere, Values (3 filters) */
-.filter-row:nth-child(2) {
-  display: flex;
-}
-
-.filter-row:nth-child(2) .custom-dropdown {
-  flex: 1;
-}
-
-/* Third row: Goals (1 filter, full width) */
-.filter-row:nth-child(3) {
-  display: flex;
-}
-
-.filter-row:nth-child(3) .custom-dropdown {
-  flex: 1;
-}
-
-/* Make dropdowns responsive */
-.custom-dropdown {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.dropdown-button {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-  background-color: var(--row-even);
-  color: var(--text-color);
-  box-shadow: 0 2px 5px var(--shadow-color);
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-align: left;
-}
-
-.dropdown-button:hover {
-  background-color: var(--row-odd);
-}
-
-.dropdown-button.active {
-  background-color: var(--accent-color);
-  color: white;
-  border-color: var(--accent-color);
-}
-
-.dropdown-arrow {
-  transition: transform 0.2s;
-}
-
-.dropdown-button.active .dropdown-arrow {
-  transform: rotate(180deg);
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: var(--row-even);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  box-shadow: 0 4px 10px var(--shadow-color);
-  z-index: 1000;
-  max-height: 200px;
-  overflow-y: auto;
-  margin-top: 2px;
-}
-
-.dropdown-menu.hidden {
-  display: none;
-}
-
-.dropdown-item {
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: var(--row-odd);
-}
-
-.dropdown-item.selected {
-  background-color: var(--accent-color);
-  color: white;
-}
-
-/* On smaller screens, allow dropdowns to stack */
-@media (max-width: 768px) {
-  .filter-row:first-child,
-  .filter-row:nth-child(2),
-  .filter-row:nth-child(3) {
-    flex-direction: column;
-  }
-  
-  .filter-row:first-child .custom-dropdown,
-  .filter-row:nth-child(2) .custom-dropdown,
-  .filter-row:nth-child(3) .custom-dropdown {
-    min-width: 100%;
-  }
+  flex-wrap: nowrap;
 }
 
 .filters select {
@@ -1495,6 +1370,135 @@ body {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+/* Custom dropdown styles */
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+  min-width: 120px;
+  flex: 1;
+}
+
+.dropdown-button {
+  background-color: var(--row-even);
+  color: var(--text-color);
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 2px 5px var(--shadow-color);
+  font-size: 0.9rem;
+}
+
+.dropdown-button:hover {
+  background-color: var(--row-odd);
+}
+
+.dropdown-button.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--row-even);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  z-index: 1000;
+  min-width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 0.25rem;
+}
+
+.dropdown-menu.hidden {
+  display: none;
+}
+
+.dropdown-item {
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-item:hover {
+  background-color: var(--row-odd);
+}
+
+.dropdown-item.selected {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.dropdown-item.tag-item::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--tag-color, var(--accent-color));
+  margin-right: 0.5rem;
+}
+
+.dropdown-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-arrow {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Filter rows */
+.filter-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Header controls - icon buttons in one line */
+.header-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Activate button styles */
+.activate-from-archive-btn {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.activate-from-archive-btn:hover {
+  background-color: #e07d3a;
+}
+
+.activate-from-archive-btn.small {
+  padding: 0.1rem 0.3rem;
+  font-size: 0.8rem;
 }
 
 /* Animations */
