@@ -30,6 +30,7 @@
   --highlight-color: rgba(255, 140, 66, 0.2);
   --shadow-color: rgba(0, 0, 0, 0.3);
   --modal-bg: rgba(26, 26, 26, 0.95);
+  --inactive-button-color: #E0E0E0; /* White color for inactive buttons in dark theme */
 }
 
 /* Ensure theme variables are applied */
