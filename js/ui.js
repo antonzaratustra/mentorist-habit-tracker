@@ -1623,7 +1623,7 @@ class UIManager {
         
         timeGroups[time].habits.forEach((habit, index) => {
           html += `<tr class="${index % 2 === 0 ? 'even' : 'odd'}">`;
-          html += `<td>${habit.name}`;
+          html += `<td><span class="habit-strength" title="Сила привычки">${habit.strength || 0}</span> ${habit.name}`;
           
           // Show activate button for archived habits when viewing archived habits
           if (habit.status === 'archived' && this.filters.status === 'archived') {

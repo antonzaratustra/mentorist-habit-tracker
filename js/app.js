@@ -275,6 +275,8 @@ class HabitTrackerApp {
               parts: []
             }
           });
+          // Recalculate habit strength after creating failed entry
+          entryManager.recalculateHabitStrength(habit.id);
         }
       });
     });

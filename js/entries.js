@@ -75,6 +75,10 @@ class EntryManager {
 
     Object.assign(entry, updates, { updatedAt: getCurrentDate() });
     this.saveEntries();
+    
+    // Recalculate habit strength after updating entry
+    this.recalculateHabitStrength(habitId);
+    
     return entry;
   }
 
@@ -181,6 +185,10 @@ class EntryManager {
     entry.textValue = textValue;
     entry.updatedAt = getCurrentDate();
     this.saveEntries();
+    
+    // Recalculate habit strength after updating entry
+    this.recalculateHabitStrength(habitId);
+    
     return entry;
   }
 
@@ -202,6 +210,10 @@ class EntryManager {
     entry.emojiValue = emojiValue;
     entry.updatedAt = getCurrentDate();
     this.saveEntries();
+    
+    // Recalculate habit strength after updating entry
+    this.recalculateHabitStrength(habitId);
+    
     return entry;
   }
 
@@ -228,6 +240,10 @@ class EntryManager {
     entry.updatedAt = getCurrentDate();
     this.saveEntries();
     console.log('Saved entry with comment:', entry);
+    
+    // Recalculate habit strength after updating entry
+    this.recalculateHabitStrength(habitId);
+    
     return entry;
   }
 
@@ -242,35 +258,58 @@ class EntryManager {
     // Get all entries for this habit
     const habitEntries = this.getEntriesByHabit(habitId);
     
+    // Sort entries by date to process chronologically
+    habitEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
     // Calculate strength based on current entries
     let strength = 0;
     
     habitEntries.forEach(entry => {
       if (habit.type === 'checkbox') {
-        // For simple checkboxes, strength is 1 if completed
+        // For simple checkboxes:
+        // +1 for completed, -1 for failed (but never below 0)
         if (entry.checkboxState.completed) {
-          strength += 1;
+          strength = Math.max(0, strength + 1);
+        } else if (entry.checkboxState.failed) {
+          strength = Math.max(0, strength - 1);
         }
       } else if (habit.type.startsWith('checkbox_')) {
-        // For multi-part checkboxes, strength is number of completed parts
+        // For multi-part checkboxes, calculate proportional strength changes
+        const partsCount = parseInt(habit.type.split('_')[1]);
+        const incrementPerPart = 1 / partsCount; // e.g., 0.25 for 4 parts
+        
         if (entry.checkboxState.parts) {
-          strength += entry.checkboxState.parts.filter(part => part).length;
+          // Count completed parts
+          const completedParts = entry.checkboxState.parts.filter(part => part).length;
+          // Add proportional strength for completed parts
+          strength = Math.max(0, strength + (completedParts * incrementPerPart));
+        }
+        
+        // If the entry is marked as failed (missed day), decrease strength
+        if (entry.checkboxState.failed) {
+          strength = Math.max(0, strength - 1);
         }
       } else if (habit.type === 'text') {
-        // For text entries, strength is 1 if text is not empty
+        // For text entries:
+        // +1 if text is not empty, -1 if explicitly marked as failed (but never below 0)
         if (entry.textValue && entry.textValue.trim() !== '') {
-          strength += 1;
+          strength = Math.max(0, strength + 1);
+        } else if (entry.checkboxState.failed) {
+          strength = Math.max(0, strength - 1);
         }
       } else if (habit.type === 'emoji') {
-        // For emoji entries, strength is 1 if emoji is selected
+        // For emoji entries:
+        // +1 if emoji is selected, -1 if explicitly marked as failed (but never below 0)
         if (entry.emojiValue && entry.emojiValue.trim() !== '') {
-          strength += 1;
+          strength = Math.max(0, strength + 1);
+        } else if (entry.checkboxState.failed) {
+          strength = Math.max(0, strength - 1);
         }
       }
     });
     
-    // Update habit strength
-    habit.strength = strength;
+    // Update habit strength (rounded to 2 decimal places for precision)
+    habit.strength = Math.round(strength * 100) / 100;
     habitManager.saveHabits();
   }
 
