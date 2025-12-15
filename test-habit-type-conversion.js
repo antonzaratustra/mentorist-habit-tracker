@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Wait for the app to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
   // Run tests after a short delay to ensure everything is initialized
-  setTimeout(runHabitConversionTests, 1000);
+  // setTimeout(runHabitConversionTests, 1000); // Закомментировано, чтобы не создавать тестовые привычки при загрузке
 });
 
 function runHabitConversionTests() {
